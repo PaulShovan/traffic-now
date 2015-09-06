@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\TrafficAppAPI.DAL\TrafficAppAPI.DAL.csproj">
+      <Project>{6fc5d22f-5b02-4727-b3e9-fb44a9d8061b}</Project>
+      <Name>TrafficAppAPI.DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TrafficAppAPI.Model\TrafficAppAPI.Model.csproj">
       <Project>{59823943-867a-4f57-bc62-d9231bf93adb}</Project>
       <Name>TrafficAppAPI.Model</Name>

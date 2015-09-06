@@ -9,7 +9,7 @@ namespace TrafficAppAPI.Service.Contracts
 {
     public interface IShoutService
     {
-        bool AddShout(Shout shout);
+        Task<bool> AddShout(Shout shout);
         List<Shout> GetShouts();
     }
 }

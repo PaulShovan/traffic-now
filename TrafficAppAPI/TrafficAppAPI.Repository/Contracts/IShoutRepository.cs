@@ -10,6 +10,6 @@ namespace TrafficAppAPI.Repository.Contracts
 {
     public interface IShoutRepository : IRepository<Shout>
     {
-
+        Task<bool> AddShout(Shout shout);
     }
 }

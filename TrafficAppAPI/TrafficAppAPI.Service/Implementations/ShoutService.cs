@@ -16,9 +16,10 @@ namespace TrafficAppAPI.Service.Implementations
         {
             _shoutRepository = shoutRepository;
         }
-        public bool AddShout(Shout shout)
+        public async Task<bool> AddShout(Shout shout)
         {
-            throw new NotImplementedException();
+            await _shoutRepository.AddShout(shout);
+            return true;
         }
 
         public List<Shout> GetShouts()

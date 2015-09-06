@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using TrafficAppAPI.DAL.Contracts;
 
 namespace TrafficAppAPI.DAL.Implementations
 {
     public class Repository<T> : TrafficNowContext, IRepository<T> where T : class
     {
+        public IMongoCollection<T> Collection { get; private set; }
+
+        public Repository()
+        {
+            Collection = Database.GetCollection<T>(typeof(T).Name.ToLower());
+        }
         public bool Add(T entity)
         {
             throw new NotImplementedException();

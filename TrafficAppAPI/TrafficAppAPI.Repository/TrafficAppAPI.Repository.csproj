@@ -40,7 +40,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\IShoutRepository.cs" />
+    <Compile Include="Implementations\ShoutRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TrafficAppAPI.DAL\TrafficAppAPI.DAL.csproj">
+      <Project>{6fc5d22f-5b02-4727-b3e9-fb44a9d8061b}</Project>
+      <Name>TrafficAppAPI.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TrafficAppAPI.Model\TrafficAppAPI.Model.csproj">
+      <Project>{59823943-867a-4f57-bc62-d9231bf93adb}</Project>
+      <Name>TrafficAppAPI.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -69,10 +69,6 @@ namespace TrafficApp.API.Controllers
                         {
                             shout.ShoutedByName = val.ToString().Trim(); ;
                         }
-                        //if (key == "ShoutedById")
-                        //{
-                        //    shout.ShoutedById = val;
-                        //}
                         else if (key == "ShoutText")
                         {
                             shout.ShoutText= val.ToString().Trim();

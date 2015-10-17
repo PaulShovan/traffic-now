@@ -53,7 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\IShoutRepository.cs" />
+    <Compile Include="Contracts\IUserModelRepository.cs" />
     <Compile Include="Implementations\ShoutRepository.cs" />
+    <Compile Include="Implementations\UserModelRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

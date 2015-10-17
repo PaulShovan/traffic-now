@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\IShoutService.cs" />
+    <Compile Include="Contracts\IUserService.cs" />
     <Compile Include="Implementations\ShoutService.cs" />
+    <Compile Include="Implementations\UserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

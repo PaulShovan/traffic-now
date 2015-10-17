@@ -40,8 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factories\ShoutFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\JsonResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TrafficAppAPI.Model\TrafficAppAPI.Model.csproj">
+      <Project>{59823943-867a-4f57-bc62-d9231bf93adb}</Project>
+      <Name>TrafficAppAPI.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,18 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Device.Location;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace TrafficAppAPI.Model
 {
-    public class Shout
+    public class Shout : TrafficStatus
     {
+        
         public string ShoutId { get; set; }
-        public string ShoutedBy { get; set; }
+        public string ShoutedByName { get; set; }
+        public string ShoutedById { get; set; }
+        public string ShoutedByPhoto { get; set; }
         public string PhotoUrl { get; set; }
         public string ShoutText { get; set; }
-        public GeoCoordinate Location { get; set; }
-        public DateTime ShoutTime { get; set; }
-        public string TrafficCondition { get; set; }
-        public int VoteCount { get; set; }
+        public int LikeCount { get; set; }
+        public List<Liker> Likers { get; set; }
+        public List<Comment> Comments { get; set; }
+
+        public Shout()
+        {
+            Comments = new List<Comment>();
+            Likers = new List<Liker>();
+        }
     }
 }

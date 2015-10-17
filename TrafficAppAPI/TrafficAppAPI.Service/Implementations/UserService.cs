@@ -29,5 +29,18 @@ namespace TrafficAppAPI.Service.Implementations
                 throw;
             }
         }
+
+        public async Task<UserModel> GetUserById(string userId)
+        {
+            try
+            {
+                return await _userRepository.GetUserById(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

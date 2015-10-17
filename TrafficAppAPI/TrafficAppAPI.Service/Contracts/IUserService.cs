@@ -10,5 +10,6 @@ namespace TrafficAppAPI.Service.Contracts
     public interface IUserService
     {
         Task<UserModel> AddOrUpdateUser(UserModel user);
+        Task<UserModel> GetUserById(string userId);
     }
 }

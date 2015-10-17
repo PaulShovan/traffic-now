@@ -78,5 +78,25 @@ namespace TrafficApp.API.Controllers
             }
 
         }
+        [Authorize]
+        [Route("user/get")]
+        public async Task<IHttpActionResult> GetUserById(string userId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest("Invalid User Id");
+                }
+                var result = await _userService.GetUserById(userId);
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+
+        }
     }
 }

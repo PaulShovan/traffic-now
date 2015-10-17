@@ -11,5 +11,6 @@ namespace TrafficAppAPI.Repository.Contracts
     public interface IUserModelRepository : IRepository<UserModel>
     {
         Task<UserModel> AddOrUpdateUser(UserModel user);
+        Task<UserModel> GetUserById(string userId);
     }
 }

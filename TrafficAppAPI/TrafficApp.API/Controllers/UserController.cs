@@ -95,7 +95,7 @@ namespace TrafficApp.API.Controllers
                     var user = _tokenGenerator.GetUserFromToken(token);
                     if (string.IsNullOrEmpty(user.UserId))
                     {
-                        return BadRequest("Invalid User Id");
+                        return BadRequest("Invalid User");
                     }
                     userId = user.UserId;                    
                 }

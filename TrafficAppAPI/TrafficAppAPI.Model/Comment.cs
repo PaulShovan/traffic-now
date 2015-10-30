@@ -8,10 +8,10 @@ namespace TrafficAppAPI.Model
 {
     public class Comment
     {
-        public int CommentId { get; set; }
+        public string CommentId { get; set; }
         public string CommentByName { get; set; }
         public string CommentById { get; set; }
         public string CommentText { get; set; }
-        public DateTime CommentTime { get; set; }
+        public string CommentTime { get; set; }
     }
 }

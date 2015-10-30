@@ -27,20 +27,15 @@ namespace TrafficApp.API.Controllers
         private IShoutService _shoutService;
         private IShoutRepository _shoutRepository = new ShoutRepository();
         private ShoutFactory _shoutFactory = new ShoutFactory();
-        private PhotoHelper _photoHelper;
         private TokenGenerator _tokenGenerator;
         private StorageService _storageService;
-        public ShoutsController(PhotoHelper photoHelper)
+        public ShoutsController()
         {
-            _photoHelper = photoHelper;
             _shoutService = new ShoutService(_shoutRepository);
             _tokenGenerator = new TokenGenerator();
             _storageService = new StorageService();
         }
-        public ShoutsController() : this(new PhotoHelper(HttpRuntime.AppDomainAppPath + @"\Album"))
-        {
-            
-        }
+        
         [Authorize]
         [Route("shouts/add")]
         [HttpPost]
@@ -187,6 +182,7 @@ namespace TrafficApp.API.Controllers
             }
 
         }
+        [Authorize]
         [HttpPost]
         [Route("shout/{id}/comments/add")]
         public async Task<IHttpActionResult> AddShoutComment(string id, Comment comment)
@@ -197,12 +193,16 @@ namespace TrafficApp.API.Controllers
                 {
                     return BadRequest();
                 }
-                var ack = await _shoutService.AddShoutComment(id, comment);
-                if (ack)
+                IEnumerable<string> values;
+                string token = "";
+                if (Request.Headers.TryGetValues("Authorization", out values))
                 {
-                    return Ok(ack);
+                    token = values.FirstOrDefault();
                 }
-                return InternalServerError();
+                var user = _tokenGenerator.GetUserFromToken(token);
+                comment.CommentById = user.UserId;
+                var ack = await _shoutService.AddShoutComment(id, comment);
+                return Ok(ack);
             }
             catch (Exception e)
             {

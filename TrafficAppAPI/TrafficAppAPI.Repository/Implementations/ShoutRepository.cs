@@ -27,12 +27,12 @@ namespace TrafficAppAPI.Repository.Implementations
             }
         }
 
-        public async Task<bool> AddShoutComment(string shoutId, Comment comment)
+        public async Task<Comment> AddShoutComment(string shoutId, Comment comment)
         {
             var filter = Builders<Shout>.Filter.Eq(s => s.ShoutId, shoutId);
             var update = Builders<Shout>.Update.AddToSet(s => s.Comments, comment);
             var result = await Collection.UpdateOneAsync(filter, update);
-            return result.IsAcknowledged;
+            return comment;
         }
 
         public async Task<Shout> GetShoutById(string shoutId)

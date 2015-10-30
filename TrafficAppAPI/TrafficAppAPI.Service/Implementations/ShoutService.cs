@@ -96,12 +96,13 @@ namespace TrafficAppAPI.Service.Implementations
             }
         }
 
-        public async Task<bool> AddShoutComment(string shoutId, Comment comment)
+        public async Task<Comment> AddShoutComment(string shoutId, Comment comment)
         {
             try
             {
-                var acknowledge = await _shoutRepository.AddShoutComment(shoutId, comment);
-                return acknowledge;
+                comment.CommentId = Guid.NewGuid().ToString();
+                var commentRes = await _shoutRepository.AddShoutComment(shoutId, comment);
+                return commentRes;
             }
             catch (Exception)
             {

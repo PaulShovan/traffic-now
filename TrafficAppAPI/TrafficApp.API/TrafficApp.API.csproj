@@ -157,12 +157,9 @@
     <Compile Include="Controllers\ShoutsController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Helper\InMemoryMultipartStreamProvider.cs" />
-    <Compile Include="Helper\PhotoMultipartFormDataStreamProvider.cs" />
-    <Compile Include="Helper\PhotoHelper.cs" />
     <Compile Include="Helper\StorageService.cs" />
     <Compile Include="Helper\TokenGenerator.cs" />
     <Compile Include="Model\JwtModel.cs" />
-    <Compile Include="Model\PhotoModel.cs" />
     <Compile Include="Model\TokenModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

@@ -110,5 +110,32 @@ namespace TrafficAppAPI.Service.Implementations
                 throw;
             }
         }
+
+        public async Task<bool> AddLike(string shoutId, Liker like)
+        {
+            try
+            {
+                var ack = await _shoutRepository.AddLike(shoutId, like);
+                return ack;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<Liker>> GetLikes(string shoutId)
+        {
+            try
+            {
+                var likers = await _shoutRepository.GetLikes(shoutId);
+                return likers;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

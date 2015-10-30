@@ -163,8 +163,9 @@ namespace TrafficApp.API.Controllers
             }
 
         }
+        [Authorize]
         [Route("shout/{id}/comments")]
-        public async Task<IHttpActionResult> GetShoutComments(string id, int skip, int limit)
+        public async Task<IHttpActionResult> GetShoutComments(string id, int skip=0, int limit=10)
         {
             try
             {
@@ -210,8 +211,9 @@ namespace TrafficApp.API.Controllers
             }
 
         }
+        [Authorize]
         [Route("shout/{id}/likes")]
-        public async Task<IHttpActionResult> GetShoutComments(string id)
+        public async Task<IHttpActionResult> GetShoutLikers(string id)
         {
             try
             {
@@ -219,11 +221,39 @@ namespace TrafficApp.API.Controllers
                 {
                     return BadRequest();
                 }
-                var shout = await _shoutService.GetShoutById(id);
-                if(shout == null)
+                var likers = await _shoutService.GetLikes(id);
+                if(likers == null)
                 {
                     return NotFound();
                 }
+                return Ok(likers);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+
+        }
+        [Authorize]
+        [HttpPost]
+        [Route("shout/{id}/likes/add")]
+        public async Task<IHttpActionResult> AddLike(string id, Liker like)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest();
+                }
+                IEnumerable<string> values;
+                string token = "";
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                like.LikeById = user.UserId;
+                var shout = await _shoutService.AddLike(id, like);
                 //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
                 return Ok(shout);
             }
@@ -233,25 +263,5 @@ namespace TrafficApp.API.Controllers
             }
 
         }
-        //[HttpPost]
-        //[Route("shout/{id}/likes/add")]
-        //public async Task<IHttpActionResult> GetShoutComments(Liker like)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrWhiteSpace(id))
-        //        {
-        //            return BadRequest();
-        //        }
-        //        var shout = await _shoutService.GetShoutById(id);
-        //        //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
-        //        return Ok(shout);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return InternalServerError();
-        //    }
-
-        //}
     }
 }

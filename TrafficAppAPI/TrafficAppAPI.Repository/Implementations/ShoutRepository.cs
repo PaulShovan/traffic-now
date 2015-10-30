@@ -14,6 +14,22 @@ namespace TrafficAppAPI.Repository.Implementations
 {
     public class ShoutRepository : Repository<Shout>, IShoutRepository
     {
+        
+        public async Task<bool> AddLike(string shoutId, Liker like)
+        {
+            try
+            {
+                var filter = Builders<Shout>.Filter.Eq(s => s.ShoutId, shoutId);
+                var update = Builders<Shout>.Update.AddToSet(s => s.Likers, like).Inc("LikeCount", 1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
         public async Task<Shout> AddShout(Shout shout)
         {
             try
@@ -35,6 +51,20 @@ namespace TrafficAppAPI.Repository.Implementations
             return comment;
         }
 
+        public async Task<List<Liker>> GetLikes(string shoutId)
+        {
+            try
+            {
+                var projection = Builders<Shout>.Projection.Slice(x => x.Likers,0).Include("Likers").Exclude("_id");
+                var result = await Collection.Find(shout => shout.ShoutId == shoutId).Project<Shout>(projection).FirstOrDefaultAsync();
+                return result.Likers;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
         public async Task<Shout> GetShoutById(string shoutId)
         {
             try
@@ -53,13 +83,11 @@ namespace TrafficAppAPI.Repository.Implementations
         {
             try
             {
-                var builder = Builders<Comment>.Sort;
-                var sortOrder = builder.Descending(c => c.CommentTime);
-                var projection = Builders<Shout>.Projection.Slice(x => x.Comments, skip, limit);
-                var result = await Collection.Find(shout => shout.ShoutId == shoutId).Project<Comment>(projection).ToListAsync();
-                return result;
+                var projection = Builders<Shout>.Projection.Slice(x => x.Comments, skip, limit).Include("Comments").Exclude("_id");
+                var result = await Collection.Find(shout => shout.ShoutId == shoutId).Project<Shout>(projection).FirstOrDefaultAsync();
+                return result.Comments;
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 throw;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin.Security.DataHandler.Encoder;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -28,11 +29,13 @@ namespace TrafficApp.API.Controllers
         private ShoutFactory _shoutFactory = new ShoutFactory();
         private PhotoHelper _photoHelper;
         private TokenGenerator _tokenGenerator;
+        private StorageService _storageService;
         public ShoutsController(PhotoHelper photoHelper)
         {
             _photoHelper = photoHelper;
             _shoutService = new ShoutService(_shoutRepository);
             _tokenGenerator = new TokenGenerator();
+            _storageService = new StorageService();
         }
         public ShoutsController() : this(new PhotoHelper(HttpRuntime.AppDomainAppPath + @"\Album"))
         {
@@ -58,9 +61,8 @@ namespace TrafficApp.API.Controllers
                 }
                 var user = _tokenGenerator.GetUserFromToken(token);
                 shout.ShoutedById = user.UserId;
-                string directoryPath = _photoHelper.GetTargetDirectory(user.UserId);
-                var provider = new PhotoMultipartFormDataStreamProvider(directoryPath);
-                await Request.Content.ReadAsMultipartAsync(provider);
+                string s3Prefix = ConfigurationManager.AppSettings["S3Prefix"];
+                var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartStreamProvider());
                 foreach (var key in provider.FormData.AllKeys)
                 {
                     foreach (var val in provider.FormData.GetValues(key))
@@ -93,22 +95,33 @@ namespace TrafficApp.API.Controllers
                         {
                             shout.Location = val.ToString().Trim();
                         }
+                        else if (key == "FileName")
+                        {
+                            shout.FileName = val.ToString().Trim();
+                        }
+
                     }
                 }
                 if (!_shoutService.ValidateShout(shout))
                 {
                     return BadRequest();
-                    //return Ok(shout);
                 }
-                //HttpPostedFile uploadedFile = HttpContext.Current.Request.Files["file"];
-                //var photoUrl = await _photoHelper.Add(Request, shout.ShoutedById);
-                var photoUrl = "";
-                foreach (var file in provider.FileData)
+                var photoUrl = shout.ShoutedById+"/"+Guid.NewGuid().ToString();
+                if (string.IsNullOrEmpty(shout.FileName))
                 {
-                    var fileInfo = new FileInfo(file.LocalFileName);
-                    photoUrl = directoryPath + fileInfo.Name;
+                    shout.PhotoUrl = "";
                 }
-                shout.PhotoUrl = photoUrl;
+                else
+                {
+                    foreach (var file in provider.Files)
+                    {
+                        Stream stream = await file.ReadAsStreamAsync();
+                        string extension = Path.GetExtension(shout.FileName);
+                        photoUrl = photoUrl + extension;
+                        _storageService.UploadFile("trafficnow", photoUrl, stream);
+                    }
+                    shout.PhotoUrl = s3Prefix+photoUrl;
+                }
                 var resultShout = await _shoutService.AddShout(shout);
                 return Ok(resultShout);
             }
@@ -116,7 +129,6 @@ namespace TrafficApp.API.Controllers
             {
                 return InternalServerError();
             }
-           
         }
         [Route("shouts/get")]
         public async Task<IHttpActionResult> Get(int? skip = 0, int? limit = 5, string sort = "Time", string fields = "")

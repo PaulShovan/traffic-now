@@ -86,7 +86,18 @@ namespace TrafficApp.API.Controllers
             {
                 if (string.IsNullOrEmpty(userId))
                 {
-                    return BadRequest("Invalid User Id");
+                    string token = "";
+                    IEnumerable<string> values;
+                    if (Request.Headers.TryGetValues("Authorization", out values))
+                    {
+                        token = values.FirstOrDefault();
+                    }
+                    var user = _tokenGenerator.GetUserFromToken(token);
+                    if (string.IsNullOrEmpty(user.UserId))
+                    {
+                        return BadRequest("Invalid User Id");
+                    }
+                    userId = user.UserId;                    
                 }
                 var result = await _userService.GetUserById(userId);
                 return Ok(result);

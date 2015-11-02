@@ -111,12 +111,21 @@ namespace TrafficAppAPI.Service.Implementations
             }
         }
 
-        public async Task<bool> AddLike(string shoutId, Liker like)
+        public async Task<bool> AddOrRemoveLike(string shoutId, Liker like)
         {
             try
             {
-                var ack = await _shoutRepository.AddLike(shoutId, like);
-                return ack;
+                bool result = false;
+                var ack = await _shoutRepository.IsAlreadyLiked(shoutId, like);
+                if (ack)
+                {
+                    result = await _shoutRepository.RemoveLike(shoutId, like);
+                }
+                else
+                {
+                    result = await _shoutRepository.AddLike(shoutId, like);
+                }
+                return result;
             }
             catch (Exception)
             {

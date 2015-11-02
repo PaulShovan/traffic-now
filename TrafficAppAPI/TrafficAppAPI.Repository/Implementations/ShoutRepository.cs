@@ -14,7 +14,7 @@ namespace TrafficAppAPI.Repository.Implementations
 {
     public class ShoutRepository : Repository<Shout>, IShoutRepository
     {
-        
+
         public async Task<bool> AddLike(string shoutId, Liker like)
         {
             try
@@ -27,6 +27,23 @@ namespace TrafficAppAPI.Repository.Implementations
             catch (Exception e)
             {
                 throw;
+
+            }
+        }
+
+        public async Task<bool> RemoveLike(string shoutId, Liker like)
+        {
+            try
+            {
+                var filter = Builders<Shout>.Filter.Eq(s => s.ShoutId, shoutId);
+                var update = Builders<Shout>.Update.PullFilter(p => p.Likers, f => f.LikeById == like.LikeById).Inc("LikeCount", -1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+
             }
         }
 
@@ -55,7 +72,7 @@ namespace TrafficAppAPI.Repository.Implementations
         {
             try
             {
-                var projection = Builders<Shout>.Projection.Slice(x => x.Likers,0).Include("Likers").Exclude("_id");
+                var projection = Builders<Shout>.Projection.Slice(x => x.Likers, 0).Include("Likers").Exclude("_id");
                 var result = await Collection.Find(shout => shout.ShoutId == shoutId).Project<Shout>(projection).FirstOrDefaultAsync();
                 return result.Likers;
             }
@@ -107,6 +124,25 @@ namespace TrafficAppAPI.Repository.Implementations
             catch (Exception e)
             {
 
+                throw;
+            }
+        }
+        public async Task<bool> IsAlreadyLiked(string shoutId, Liker like)
+        {
+            try
+            {
+                var filter = Builders<Shout>.Filter.Eq(s => s.ShoutId, shoutId);
+                var filter2 = Builders<Shout>.Filter.ElemMatch(p => p.Likers, f => f.LikeById == like.LikeById);
+                var filter3 = Builders<Shout>.Filter.And(filter, filter2);
+                var shout = await Collection.CountAsync(filter3);
+                if (shout < 1 )
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
                 throw;
             }
         }

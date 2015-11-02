@@ -15,7 +15,7 @@ namespace TrafficAppAPI.Service.Contracts
         Task<Shout> GetShoutById(string shoutId);
         Task<List<Comment>> GetShoutComments(string shoutId, int skip, int limit);
         Task<Comment> AddShoutComment(string shoutId, Comment comment);
-        Task<bool> AddLike(string shoutId, Liker like);
+        Task<bool> AddOrRemoveLike(string shoutId, Liker like);
         Task<List<Liker>> GetLikes(string shoutId);
         bool ValidateShout(Shout shout);
     }

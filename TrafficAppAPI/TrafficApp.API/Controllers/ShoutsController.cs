@@ -125,6 +125,7 @@ namespace TrafficApp.API.Controllers
                 return InternalServerError();
             }
         }
+        [Authorize]
         [Route("shouts/get")]
         public async Task<IHttpActionResult> Get(int? skip = 0, int? limit = 5, string sort = "Time", string fields = "")
         {
@@ -236,8 +237,8 @@ namespace TrafficApp.API.Controllers
         }
         [Authorize]
         [HttpPost]
-        [Route("shout/{id}/likes/add")]
-        public async Task<IHttpActionResult> AddLike(string id, Liker like)
+        [Route("shout/{id}/likes/addorremove")]
+        public async Task<IHttpActionResult> AddOrRemoveLike(string id, Liker like)
         {
             try
             {
@@ -253,8 +254,7 @@ namespace TrafficApp.API.Controllers
                 }
                 var user = _tokenGenerator.GetUserFromToken(token);
                 like.LikeById = user.UserId;
-                var shout = await _shoutService.AddLike(id, like);
-                //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
+                var shout = await _shoutService.AddOrRemoveLike(id, like);
                 return Ok(shout);
             }
             catch (Exception e)

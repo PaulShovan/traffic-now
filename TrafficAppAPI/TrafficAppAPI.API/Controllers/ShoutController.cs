@@ -18,7 +18,7 @@ namespace TrafficAppAPI.API.Controllers
             _shoutService = shoutService;
         }
         [HttpPost]
-        public async Task<bool> AddShout(Shout shout)
+        public async Task<bool> AddOrRemoveShout(Shout shout)
         {
             var headers = Request.Headers;
             var token = headers.GetValues("AccessToken").First();

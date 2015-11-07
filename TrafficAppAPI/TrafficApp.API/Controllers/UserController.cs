@@ -80,7 +80,7 @@ namespace TrafficApp.API.Controllers
         }
         [Authorize]
         [Route("user/get")]
-        public async Task<IHttpActionResult> GetUserById(string userId)
+        public async Task<IHttpActionResult> GetUserById(string userId="")
         {
             try
             {

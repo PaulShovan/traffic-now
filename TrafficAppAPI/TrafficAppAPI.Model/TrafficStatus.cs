@@ -8,9 +8,9 @@ namespace TrafficAppAPI.Model
 {
     public class TrafficStatus
     {
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
-        public string Time { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public long Time { get; set; }
         public string TrafficCondition { get; set; }
         public string Location { get; set; }
     }

@@ -47,12 +47,27 @@ namespace TrafficAppAPI.Repository.Implementations
             }
         }
 
-        public async Task<Shout> AddShout(Shout shout)
+        public async Task<Shout> AddShout(ShoutDto shout)
         {
             try
             {
                 await Collection.InsertOneAsync(shout);
-                return shout;
+                return new Shout{
+                    ShoutId = shout.ShoutId,
+                    ShoutedByName = shout.ShoutedByName,
+                    ShoutedById = shout.ShoutedById,
+                    ShoutedByPhoto = shout.ShoutedByPhoto,
+                    PhotoUrl = shout.PhotoUrl,
+                    ShoutText = shout.ShoutText,
+                    LikeCount = shout.LikeCount,
+                    Likers = shout.Likers,
+                    Comments = shout.Comments,
+                    Latitude = shout.Latitude,
+                    Longitude = shout.Longitude,
+                    Time = shout.Time,
+                    TrafficCondition = shout.TrafficCondition,
+                    Location = shout.Location
+                };
             }
             catch (Exception e)
             {
@@ -117,7 +132,7 @@ namespace TrafficAppAPI.Repository.Implementations
             {
                 var builder = Builders<Shout>.Sort;
                 var sortOrder = builder.Ascending(sort);
-                var projection = Builders<Shout>.Projection.Slice(x => x.Comments, 0, 5).Exclude("_id");
+                var projection = Builders<Shout>.Projection.Slice(x => x.Comments, 0, 5).Exclude("_id").Exclude("loc").Exclude("FileName");
                 var result = await Collection.Find(shout => shout.ShoutId != "").Project<Shout>(projection).Sort(sortOrder).Skip(skip).Limit(limit).ToListAsync();
                 return result;
             }

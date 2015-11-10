@@ -26,8 +26,8 @@ namespace TrafficAppAPI.Service.Implementations
         {
             if(String.IsNullOrWhiteSpace(shout.ShoutedByName) 
                 || String.IsNullOrWhiteSpace(shout.ShoutedById) 
-                || String.IsNullOrWhiteSpace(shout.Latitude) 
-                || String.IsNullOrWhiteSpace(shout.Longitude)
+                || double.IsNaN(shout.Latitude) 
+                || double.IsNaN(shout.Longitude)
                 || String.IsNullOrWhiteSpace(shout.Location)
                 || !IsValidTrafficCondition(shout.TrafficCondition))
             {
@@ -39,18 +39,20 @@ namespace TrafficAppAPI.Service.Implementations
         {
             _shoutRepository = shoutRepository;
         }
-        public async Task<Shout> AddShout(Shout shout)
+        public async Task<Shout> AddShout(ShoutDto shout)
         {
             try
             {
                 if (ValidateShout(shout))
                 {
                     shout.ShoutId = Guid.NewGuid().ToString();
+                    shout.loc.coordinates[0] = shout.Longitude;
+                    shout.loc.coordinates[1] = shout.Latitude;
                     return await _shoutRepository.AddShout(shout);
                 }
                 return new Shout();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }

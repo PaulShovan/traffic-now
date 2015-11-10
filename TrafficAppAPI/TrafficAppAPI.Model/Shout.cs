@@ -19,7 +19,6 @@ namespace TrafficAppAPI.Model
         public string PhotoUrl { get; set; }
         public string ShoutText { get; set; }
         public int LikeCount { get; set; }
-        public string FileName { get; set; }
         public List<Liker> Likers { get; set; }
         public List<Comment> Comments { get; set; }
 

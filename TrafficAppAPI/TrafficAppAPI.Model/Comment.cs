@@ -12,6 +12,6 @@ namespace TrafficAppAPI.Model
         public string CommentByName { get; set; }
         public string CommentById { get; set; }
         public string CommentText { get; set; }
-        public string CommentTime { get; set; }
+        public long CommentTime { get; set; }
     }
 }

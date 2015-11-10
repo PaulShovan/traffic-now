@@ -44,7 +44,7 @@ namespace TrafficApp.API.Controllers
             try
             {
                 string token = "";
-                var shout = new Shout();
+                var shout = new ShoutDto();
                 if (!Request.Content.IsMimeMultipartContent("form-data"))
                 {
                     return BadRequest("Unsupported media type");
@@ -72,15 +72,15 @@ namespace TrafficApp.API.Controllers
                         }
                         else if (key == "Latitude")
                         {
-                            shout.Latitude = val.ToString().Trim();
+                            shout.Latitude = Convert.ToDouble(val.Trim());
                         }
                         else if (key == "Longitude")
                         {
-                            shout.Longitude = val.ToString().Trim();
+                            shout.Longitude = Convert.ToDouble(val.Trim());
                         }
                         else if (key == "Time")
                         {
-                            shout.Time = val.ToString().Trim();
+                            shout.Time = Convert.ToInt64(val.Trim());
                         }
                         else if (key == "TrafficCondition")
                         {
@@ -127,13 +127,13 @@ namespace TrafficApp.API.Controllers
         }
         [Authorize]
         [Route("shouts/get")]
-        public async Task<IHttpActionResult> Get(int? skip = 0, int? limit = 5, string sort = "Time", string fields = "")
+        public async Task<IHttpActionResult> Get(int? skip = 0, int? limit = 100, string sort = "Time", string fields="")
         {
             try
             {
                 var shouts = await _shoutService.GetShouts(skip, limit, sort);
-                var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
-                return Ok(shapedShouts);
+                //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
+                return Ok(shouts);
             }
             catch (Exception e)
             {

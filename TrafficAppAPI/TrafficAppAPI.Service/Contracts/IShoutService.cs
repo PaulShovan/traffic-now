@@ -10,7 +10,7 @@ namespace TrafficAppAPI.Service.Contracts
 {
     public interface IShoutService
     {
-        Task<Shout> AddShout(Shout shout);
+        Task<Shout> AddShout(ShoutDto shout);
         Task<List<Shout>> GetShouts(int? skip, int? limit, string sort);
         Task<Shout> GetShoutById(string shoutId);
         Task<List<Comment>> GetShoutComments(string shoutId, int skip, int limit);

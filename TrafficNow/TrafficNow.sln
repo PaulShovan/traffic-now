@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{96E3F1B8-EDFD-4C30-8032-3725297AFBD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Core", "TrafficNow.Core\TrafficNow.Core.csproj", "{412A3711-72BA-45FB-842F-36B0B304EA11}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{6B4C47A7-6298-4FE6-B634-6B19BDA264AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Repository.Interface", "TrafficNow.Repository.Interface\TrafficNow.Repository.Interface.csproj", "{E15F113A-ECD1-4579-8026-2E08ECA15D2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Service.Interface", "TrafficNow.Service.Interface\TrafficNow.Service.Interface.csproj", "{6F6355C9-A8CC-451D-B125-2ADE25CEE4A0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{CA52832A-49AE-4F64-AAFC-CE350226999B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DependencyInjection", "DependencyInjection", "{FB2B5790-8CB9-4C97-8E02-641811D62A9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{CCDE29EA-DB15-48CD-ADA9-0E7D669B9513}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Repository.Implementation", "TrafficNow.Repository.Implementation\TrafficNow.Repository.Implementation.csproj", "{2D91ABAF-0452-4485-B057-D2ECA709A61A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Service.Implementation", "TrafficNow.Service.Implementation\TrafficNow.Service.Implementation.csproj", "{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.DependencyInjection", "TrafficNow.DependencyInjection\TrafficNow.DependencyInjection.csproj", "{805FBF72-942F-43DC-9CDA-929B43A9045C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Api", "TrafficNow.Api\TrafficNow.Api.csproj", "{05D2BCF3-68CE-450E-973F-D5E37592BB00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{412A3711-72BA-45FB-842F-36B0B304EA11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{412A3711-72BA-45FB-842F-36B0B304EA11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{412A3711-72BA-45FB-842F-36B0B304EA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{412A3711-72BA-45FB-842F-36B0B304EA11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E15F113A-ECD1-4579-8026-2E08ECA15D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E15F113A-ECD1-4579-8026-2E08ECA15D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E15F113A-ECD1-4579-8026-2E08ECA15D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E15F113A-ECD1-4579-8026-2E08ECA15D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F6355C9-A8CC-451D-B125-2ADE25CEE4A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6355C9-A8CC-451D-B125-2ADE25CEE4A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6355C9-A8CC-451D-B125-2ADE25CEE4A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6355C9-A8CC-451D-B125-2ADE25CEE4A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D91ABAF-0452-4485-B057-D2ECA709A61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D91ABAF-0452-4485-B057-D2ECA709A61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D91ABAF-0452-4485-B057-D2ECA709A61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D91ABAF-0452-4485-B057-D2ECA709A61A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{805FBF72-942F-43DC-9CDA-929B43A9045C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{805FBF72-942F-43DC-9CDA-929B43A9045C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{805FBF72-942F-43DC-9CDA-929B43A9045C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{805FBF72-942F-43DC-9CDA-929B43A9045C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{412A3711-72BA-45FB-842F-36B0B304EA11} = {96E3F1B8-EDFD-4C30-8032-3725297AFBD6}
+		{E15F113A-ECD1-4579-8026-2E08ECA15D2C} = {6B4C47A7-6298-4FE6-B634-6B19BDA264AD}
+		{6F6355C9-A8CC-451D-B125-2ADE25CEE4A0} = {6B4C47A7-6298-4FE6-B634-6B19BDA264AD}
+		{2D91ABAF-0452-4485-B057-D2ECA709A61A} = {CCDE29EA-DB15-48CD-ADA9-0E7D669B9513}
+		{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868} = {CA52832A-49AE-4F64-AAFC-CE350226999B}
+		{805FBF72-942F-43DC-9CDA-929B43A9045C} = {FB2B5790-8CB9-4C97-8E02-641811D62A9D}
+		{05D2BCF3-68CE-450E-973F-D5E37592BB00} = {1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}
+	EndGlobalSection
+EndGlobal

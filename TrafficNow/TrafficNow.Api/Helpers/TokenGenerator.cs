@@ -16,7 +16,7 @@ namespace TrafficNow.Api.Helpers
 {
     public class TokenGenerator
     {
-        public string GenerateUserToken(UserViewModel user)
+        public JwtModel GenerateUserToken(UserViewModel user)
         {
             string jwtToken = "";
             string issuer = "";
@@ -46,7 +46,10 @@ namespace TrafficNow.Api.Helpers
 
                 var handler = new JwtSecurityTokenHandler();
                 jwtToken = handler.WriteToken(token);
-                return jwtToken;
+
+                return new JwtModel {
+                    token = jwtToken
+                };
             }
             catch (Exception e)
             {

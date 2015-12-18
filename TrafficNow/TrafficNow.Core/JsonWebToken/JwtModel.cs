@@ -8,9 +8,6 @@ namespace TrafficNow.Core.JsonWebToken
 {
     public class JwtModel
     {
-        public string userId;
-        public string name;
-        public string userName;
-        public string photo;
+        public string token;
     }
 }

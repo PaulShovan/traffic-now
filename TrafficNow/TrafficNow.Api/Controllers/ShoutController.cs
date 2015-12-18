@@ -84,7 +84,7 @@ namespace TrafficNow.Api.Controllers
                 }
                 if (!_shoutService.ValidateShout(shout))
                 {
-                    return BadRequest();
+                    return BadRequest("Invalid Data");
                 }
                 else
                 {

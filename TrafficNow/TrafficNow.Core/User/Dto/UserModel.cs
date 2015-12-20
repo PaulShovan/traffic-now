@@ -13,15 +13,16 @@ namespace TrafficNow.Core.User.Dto
     public class UserModel : UserViewModel
     {
         public string facebookId;
-        public List<UserBasicModel> followers;
-        public List<UserBasicModel> followees;
+        public List<FollowModel> followers;
+        public List<FollowModel> followees;
         [BsonRepresentation(BsonType.String)]         // Mongo
         public Status accountStatus;
+        public bool showUserEmail;
         public string password;
         public UserModel()
         {
-            followers = new List<UserBasicModel>();
-            followees = new List<UserBasicModel>();
+            followers = new List<FollowModel>();
+            followees = new List<FollowModel>();
         }
     }
 }

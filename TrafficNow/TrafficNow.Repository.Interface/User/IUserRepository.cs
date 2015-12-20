@@ -18,6 +18,15 @@ namespace TrafficNow.Repository.Interface.User
         void RegisterUser(UserModel user);
         Task<UserBasicModel> LoginUsingEmail(string email, string password);
         Task<UserBasicModel> LoginUsingUserName(string userName, string password);
+        #region follow
         Task<bool> UpdateUserPoint(string userId, int pointToAdd);
+        Task<bool> AddFollower(string userId, FollowModel user);
+        Task<bool> AddFollowee(string userId, FollowModel user);
+        Task<bool> IsAlreadyFollower(string userId, FollowModel user);
+        Task<bool> RemoveFollower(string userId, FollowModel user);
+        Task<bool> RemoveFollowee(string userId, FollowModel user);
+        Task<List<FollowModel>> GetFollowees(string userId, int offset, int count);
+        Task<List<FollowModel>> GetFollowers(string userId, int offset, int count);
+        #endregion
     }
 }

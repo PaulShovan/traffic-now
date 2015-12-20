@@ -42,7 +42,6 @@ namespace TrafficNow.Repository.Implementation.Shout
             catch (Exception e)
             {
                 throw;
-
             }
         }
 
@@ -76,10 +75,17 @@ namespace TrafficNow.Repository.Implementation.Shout
 
         public async Task<CommentViewModel> AddShoutComment(string shoutId, CommentModel comment)
         {
-            var filter = Builders<ShoutModel>.Filter.Eq(s => s.shoutId, shoutId);
-            var update = Builders<ShoutModel>.Update.AddToSet(s => s.comments, comment).Inc(s => s.commentCount, 1);
-            var result = await Collection.UpdateOneAsync(filter, update);
-            return comment;
+            try
+            {
+                var filter = Builders<ShoutModel>.Filter.Eq(s => s.shoutId, shoutId);
+                var update = Builders<ShoutModel>.Update.AddToSet(s => s.comments, comment).Inc(s => s.commentCount, 1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return comment;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public async Task<List<LikerViewModel>> GetLikes(string shoutId)
@@ -122,7 +128,6 @@ namespace TrafficNow.Repository.Implementation.Shout
             }
             catch (Exception e)
             {
-
                 throw;
             }
         }

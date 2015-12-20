@@ -65,6 +65,7 @@
     <Compile Include="Shout\ViewModel\LikerViewModel.cs" />
     <Compile Include="Shout\ViewModel\ShoutViewModel.cs" />
     <Compile Include="User\Dto\BadgeModel.cs" />
+    <Compile Include="User\Dto\FollowModel.cs" />
     <Compile Include="User\Dto\TokenModel.cs" />
     <Compile Include="User\Dto\UserBasicModel.cs" />
     <Compile Include="User\Dto\UserModel.cs" />

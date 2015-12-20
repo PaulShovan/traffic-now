@@ -77,6 +77,17 @@ namespace TrafficNow.Service.Implementation
                 throw;
             }
         }
+        public async Task<List<ShoutViewModel>> GetShouts(int? offset, int? count, string userId)
+        {
+            try
+            {
+                return await _shoutRepository.GetShouts(offset, count, userId);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
 
         public async Task<ShoutViewModel> GetShoutById(string shoutId)
         {

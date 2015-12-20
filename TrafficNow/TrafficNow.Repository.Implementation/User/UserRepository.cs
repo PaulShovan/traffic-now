@@ -33,14 +33,32 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
-
         public async Task<UserViewModel> GetUserById(string userId)
         {
             try
             {
-                var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude("facebookId");
-                var result = await Collection.Find(user => user.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
-                return result;
+                var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude(u => u.facebookId);
+                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
+                var user = new UserViewModel
+                {
+                    userId = result.userId,
+                    userName = result.userName,
+                    name = result.name,
+                    photo = result.photo,
+                    address = result.address,
+                    points = result.points,
+                    mood = result.mood,
+                    bio = result.bio,
+                    emailVerified = result.emailVerified,
+                    badges = result.badges,
+                    followeeCount = result.followeeCount,
+                    followerCount = result.followerCount
+                };
+                if (result.showUserEmail)
+                {
+                    user.email = result.email;
+                }
+                return user;
             }
             catch (Exception e)
             {
@@ -48,7 +66,6 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
-
         public async Task<bool> IsEmailTaken(string email)
         {
             try
@@ -90,10 +107,10 @@ namespace TrafficNow.Repository.Implementation.User
                 var builder = Builders<UserModel>.Filter;
                 var filter = builder.Eq(user => user.email, email) & builder.Eq(user => user.password, password);
                 var projection = Builders<UserModel>.Projection.Exclude("_id")
-                    .Include("id")
-                    .Include("photo")
-                    .Include("name")
-                    .Include("userName");
+                    .Include(u => u.userId)
+                    .Include(u => u.photo)
+                    .Include(u => u.name)
+                    .Include(u => u.userName);
                 var result = await Collection.Find(filter).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result;
             }
@@ -110,10 +127,10 @@ namespace TrafficNow.Repository.Implementation.User
                 var builder = Builders<UserModel>.Filter;
                 var filter = builder.Eq(user => user.userName, userName) & builder.Eq(user => user.password, password);
                 var projection = Builders<UserModel>.Projection.Exclude("_id")
-                    .Include("id")
-                    .Include("photo")
-                    .Include("name")
-                    .Include("userName");
+                    .Include(u => u.userId)
+                    .Include(u => u.photo)
+                    .Include(u => u.name)
+                    .Include(u => u.userName);
                 var result = await Collection.Find(filter).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result;
             }
@@ -149,5 +166,110 @@ namespace TrafficNow.Repository.Implementation.User
 
             }
         }
+        #region follow
+        public async Task<bool> AddFollowee(string userId, FollowModel user)
+        {
+            try
+            {
+                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
+                var update = Builders<UserModel>.Update.AddToSet(u => u.followees, user).Inc(u => u.followeeCount, 1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> AddFollower(string userId, FollowModel user)
+        {
+            try
+            {
+                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
+                var update = Builders<UserModel>.Update.AddToSet(u => u.followers, user).Inc(u => u.followerCount, 1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<List<FollowModel>> GetFollowees(string userId, int offset, int count)
+        {
+            try
+            {
+                var projection = Builders<UserModel>.Projection.Slice(x => x.followees, offset, count).Include(u => u.followees).Exclude("_id");
+                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
+                return result.followees;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<List<FollowModel>> GetFollowers(string userId, int offset, int count)
+        {
+            try
+            {
+                var projection = Builders<UserModel>.Projection.Slice(x => x.followers, offset, count).Include(u => u.followers).Exclude("_id");
+                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
+                return result.followers;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> IsAlreadyFollower(string userId, FollowModel user)
+        {
+            try
+            {
+                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
+                var filter2 = Builders<UserModel>.Filter.ElemMatch(p => p.followers, f => f.userId == user.userId);
+                var filter3 = Builders<UserModel>.Filter.And(filter, filter2);
+                var count = await Collection.CountAsync(filter3);
+                if (count < 1)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> RemoveFollowee(string userId, FollowModel user)
+        {
+            try
+            {
+                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
+                var update = Builders<UserModel>.Update.PullFilter(p => p.followees, f => f.userId == user.userId).Inc(u => u.followeeCount, -1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> RemoveFollower(string userId, FollowModel user)
+        {
+            try
+            {
+                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
+                var update = Builders<UserModel>.Update.PullFilter(p => p.followers, f => f.userId == user.userId).Inc(u => u.followerCount, -1);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        #endregion follow
     }
 }

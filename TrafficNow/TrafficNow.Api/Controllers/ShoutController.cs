@@ -80,6 +80,10 @@ namespace TrafficNow.Api.Controllers
                         {
                             shout.trafficCondition = val.ToString().Trim();
                         }
+                        else if (key == "name")
+                        {
+                            shout.name = val.ToString().Trim();
+                        }
                     }
                 }
                 if (!_shoutService.ValidateShout(shout))
@@ -106,12 +110,42 @@ namespace TrafficNow.Api.Controllers
                 return InternalServerError();
             }
         }
+        [Authorize]
         [Route("aunthazel/shouts/get")]
         public async Task<IHttpActionResult> Get(int? offset = 0, int? count = 10)
         {
             try
             {
                 var shouts = await _shoutService.GetShouts(offset, count);
+                return Ok(shouts);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [Authorize]
+        [Route("aunthazel/shouts/getusershouts")]
+        public async Task<IHttpActionResult> GetUserShouts(int? offset = 0, int? count = 10, string userId="")
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    string token = "";
+                    IEnumerable<string> values;
+                    if (Request.Headers.TryGetValues("Authorization", out values))
+                    {
+                        token = values.FirstOrDefault();
+                    }
+                    var user = _tokenGenerator.GetUserFromToken(token);
+                    if (string.IsNullOrEmpty(user.userId))
+                    {
+                        return BadRequest("Invalid User");
+                    }
+                    userId = user.userId;
+                }
+                var shouts = await _shoutService.GetShouts(offset, count, userId);
                 return Ok(shouts);
             }
             catch (Exception e)

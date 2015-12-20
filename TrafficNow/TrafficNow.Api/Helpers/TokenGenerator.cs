@@ -30,9 +30,13 @@ namespace TrafficNow.Api.Helpers
 
                 var identity = new ClaimsIdentity("JWT");
 
-                identity.AddClaim(new Claim("id", user.userId));
+                identity.AddClaim(new Claim("userId", user.userId));
                 identity.AddClaim(new Claim("userName", user.userName));
                 identity.AddClaim(new Claim("photo", user.photo));
+                if(user.name != null)
+                {
+                    identity.AddClaim(new Claim("name", user.name));
+                }
                 identity.AddClaim(new Claim(ClaimTypes.Role, "User"));
 
                 var now = DateTime.UtcNow;

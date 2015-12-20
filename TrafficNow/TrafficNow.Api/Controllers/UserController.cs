@@ -112,6 +112,7 @@ namespace TrafficNow.Api.Controllers
                 user.password = hashedPassword;
                 user.userId = Guid.NewGuid().ToString();
                 user.points = 2;
+                user.showUserEmail = true;
                 var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                 user.photo = s3Prefix+photoUrl;
                 _userService.RegisterUser(user);
@@ -166,7 +167,8 @@ namespace TrafficNow.Api.Controllers
             }
 
         }
-        [Route("user/get")]
+        [Authorize]
+        [Route("aunthazel/user/get")]
         public async Task<IHttpActionResult> GetUserById(string userId = "")
         {
             try
@@ -194,7 +196,6 @@ namespace TrafficNow.Api.Controllers
             {
                 return InternalServerError();
             }
-
         }
     }
 }

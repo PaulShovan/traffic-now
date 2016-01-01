@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.API.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -27,7 +28,7 @@ namespace TrafficNow.Api.Controllers
             _tokenGenerator = new TokenGenerator();
         }
         [Authorize]
-        [Route("aunthazel/shouts/add")]
+        [VersionedRoute("shouts/add", "aunthazel", "v1")]
         [HttpPost]
         public async Task<IHttpActionResult> AddShout()
         {
@@ -111,7 +112,7 @@ namespace TrafficNow.Api.Controllers
             }
         }
         [Authorize]
-        [Route("aunthazel/shouts/get")]
+        [VersionedRoute("shouts/get", "aunthazel", "v1")]
         public async Task<IHttpActionResult> Get(int? offset = 0, int? count = 10)
         {
             try
@@ -125,7 +126,7 @@ namespace TrafficNow.Api.Controllers
             }
         }
         [Authorize]
-        [Route("aunthazel/shouts/getusershouts")]
+        [VersionedRoute("shouts/getusershouts", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetUserShouts(int? offset = 0, int? count = 10, string userId="")
         {
             try
@@ -154,7 +155,7 @@ namespace TrafficNow.Api.Controllers
             }
         }
         [Authorize]
-        [Route("shouts/shout")]
+        [VersionedRoute("shouts/shout", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetShoutById(string id)
         {
             try
@@ -178,7 +179,7 @@ namespace TrafficNow.Api.Controllers
 
         }
         [Authorize]
-        [Route("aunthazel/shout/{id}/comments")]
+        [VersionedRoute("shout/{id}/comments", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetShoutComments(string id, int skip = 0, int limit = 10)
         {
             try
@@ -198,7 +199,7 @@ namespace TrafficNow.Api.Controllers
         }
         [Authorize]
         [HttpPost]
-        [Route("aunthazel/shout/{id}/comments/add")]
+        [VersionedRoute("shout/{id}/comments/add", "aunthazel", "v1")]
         public async Task<IHttpActionResult> AddShoutComment(string id, CommentModel comment)
         {
             try
@@ -226,7 +227,7 @@ namespace TrafficNow.Api.Controllers
 
         }
         [Authorize]
-        [Route("aunthazel/shout/{id}/likes")]
+        [VersionedRoute("shout/{id}/likes", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetShoutLikers(string id)
         {
             try
@@ -250,7 +251,7 @@ namespace TrafficNow.Api.Controllers
         }
         [Authorize]
         [HttpPost]
-        [Route("aunthazel/shout/{id}/likes/addorremove")]
+        [VersionedRoute("shout/{id}/likes/addorremove", "aunthazel", "v1")]
         public async Task<IHttpActionResult> AddOrRemoveLike(string id, LikerModel like)
         {
             try

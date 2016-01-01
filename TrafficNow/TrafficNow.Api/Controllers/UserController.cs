@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.API.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -52,7 +53,7 @@ namespace TrafficNow.Api.Controllers
             }
             return new UserModel();
         }
-        [Route("aunthazel/user/register/facebook")]
+        [VersionedRoute("user/register/facebook", "aunthazel", "v1")]
         [HttpPost]
         public async Task<IHttpActionResult> RegisterUser(TokenModel tokenmodel)
         {
@@ -90,7 +91,7 @@ namespace TrafficNow.Api.Controllers
             }
 
         }
-        [Route("aunthazel/user/register")]
+        [VersionedRoute("user/register", "aunthazel", "v1")]
         [HttpPost]
         public async Task<IHttpActionResult> RegisterUser(UserModel user)
         {
@@ -131,7 +132,7 @@ namespace TrafficNow.Api.Controllers
                 return InternalServerError();
             }
         }
-        [Route("aunthazel/user/login")]
+        [VersionedRoute("user/login","aunthazel","v1")]
         [HttpPost]
         public async Task<IHttpActionResult> LoginUser(LoginModel userLogin)
         {
@@ -168,7 +169,7 @@ namespace TrafficNow.Api.Controllers
 
         }
         [Authorize]
-        [Route("aunthazel/user/get")]
+        [VersionedRoute("user/get", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetUserById(string userId = "")
         {
             try

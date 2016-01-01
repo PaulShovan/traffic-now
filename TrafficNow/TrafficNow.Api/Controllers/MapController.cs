@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.API.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -17,7 +18,7 @@ namespace TrafficNow.Api.Controllers
         {
             _mapService = mapService;
         }
-        [Route("map/get")]
+        [VersionedRoute("map/get", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetMapPoints(double lat, double lon)
         {
             try

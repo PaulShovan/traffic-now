@@ -13,6 +13,7 @@ namespace TrafficNow.Service.Interface
         Task<ShoutViewModel> AddShout(ShoutModel shout);
         Task<List<ShoutViewModel>> GetShouts(int? skip, int? limit);
         Task<List<ShoutViewModel>> GetShouts(int? skip, int? limit, string userId);
+        Task<List<ShoutViewModel>> GetFollowersShouts(int? offset, int? count, string userId);
         Task<ShoutViewModel> GetShoutById(string shoutId);
         Task<List<CommentViewModel>> GetShoutComments(string shoutId, int skip, int limit);
         Task<CommentViewModel> AddShoutComment(string shoutId, CommentModel comment);

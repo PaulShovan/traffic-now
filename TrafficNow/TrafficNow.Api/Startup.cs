@@ -23,7 +23,6 @@ namespace TrafficNow.Api
             var cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);
             WebApiConfig.Register(config);
-
             //app.UseWebApi(WebApiConfig.Register());
             app.UseNinjectMiddleware(() => NinjectConfig.CreateKernel.Value);
             app.UseNinjectWebApi(config);

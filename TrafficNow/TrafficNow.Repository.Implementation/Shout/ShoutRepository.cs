@@ -185,5 +185,23 @@ namespace TrafficNow.Repository.Implementation.Shout
                 throw;
             }
         }
+        public async Task<List<ShoutViewModel>> GetFollowersShouts(int? offset, int? count, List<string> followers)
+        {
+            try
+            {
+                List<ShoutViewModel> shouts = new List<ShoutViewModel>();
+                var filter = Builders<ShoutModel>.Filter.In( s=>s.userId, followers);
+                var sortBuilder = Builders<ShoutModel>.Sort;
+                var sortOrder = sortBuilder.Descending(s => s.time);
+                var projection = Builders<ShoutModel>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s => s.loc).Exclude(s => s.likes);
+                var result = await Collection.Find(filter).Project<ShoutModel>(projection).Sort(sortOrder).Skip(offset).Limit(count).ToListAsync();
+                result.ForEach(x => shouts.Add(x));
+                return shouts;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 }

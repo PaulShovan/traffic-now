@@ -116,7 +116,7 @@ namespace TrafficNow.Api.Controllers
                 user.showUserEmail = true;
                 var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                 user.photo = s3Prefix+photoUrl;
-                _userService.RegisterUser(user);
+                var res = await _userService.RegisterUser(user);
                 var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.png");
                 if (File.Exists(defaultPath))
                 {
@@ -192,6 +192,60 @@ namespace TrafficNow.Api.Controllers
                 var result = await _userService.GetUserById(userId);
                 return Ok(result);
 
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [VersionedRoute("user/follow", "aunthazel", "v1")]
+        [VersionedRoute("user/unfollow", "aunthazel", "v1")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FollowUser(FollowModel userToFollow)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userToFollow.userName) || string.IsNullOrEmpty(userToFollow.userId))
+                {
+                    return BadRequest("Invalid User Data");
+                }
+                string token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var userBasic = _tokenGenerator.GetUserFromToken(token);
+                var user = new FollowModel
+                {
+                    userId = userBasic.userId,
+                    userName = userBasic.userName,
+                    photo = userBasic.photo,
+                    time = userToFollow.time
+                };
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                if (await _userService.IsAlreadyFollower(userToFollow.userId, user))
+                {
+                    bool followerDone = await _userService.RemoveFollower(userToFollow.userId, user);
+                    bool followeeDone = await _userService.RemoveFollowee(user.userId, userToFollow);
+                    if (followerDone && followeeDone)
+                    {
+                        return Ok("Unfollowed successfully");
+                    }
+                }
+                else
+                {
+                    bool followerDone = await _userService.AddFollower(userToFollow.userId, user);
+                    bool followeeDone = await _userService.AddFollowee(user.userId, userToFollow);
+                    if(followerDone && followeeDone)
+                    {
+                        return Ok("Followed successfully");
+                    }
+                }
+                return BadRequest();
             }
             catch (Exception e)
             {

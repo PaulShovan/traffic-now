@@ -140,11 +140,12 @@ namespace TrafficNow.Repository.Implementation.User
             }
         }
 
-        public async void RegisterUser(UserModel user)
+        public async Task<bool> RegisterUser(UserModel user)
         {
             try
             {
                 await Collection.InsertOneAsync(user);
+                return true;
             }
             catch (Exception ex)
             {
@@ -214,6 +215,19 @@ namespace TrafficNow.Repository.Implementation.User
             try
             {
                 var projection = Builders<UserModel>.Projection.Slice(x => x.followers, offset, count).Include(u => u.followers).Exclude("_id");
+                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
+                return result.followers;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<List<FollowModel>> GetFollowers(string userId)
+        {
+            try
+            {
+                var projection = Builders<UserModel>.Projection.Include(u => u.followers).Exclude("_id");
                 var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result.followers;
             }

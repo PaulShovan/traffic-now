@@ -155,6 +155,33 @@ namespace TrafficNow.Api.Controllers
             }
         }
         [Authorize]
+        [VersionedRoute("shouts/getfollowershouts", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetFollowersShouts(int? offset = 0, int? count = 10)
+        {
+            try
+            {
+                string token = "";
+                string userId = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                userId = user.userId;
+                var shouts = await _shoutService.GetFollowersShouts(offset, count, userId);
+                return Ok(shouts);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [Authorize]
         [VersionedRoute("shouts/shout", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetShoutById(string id)
         {

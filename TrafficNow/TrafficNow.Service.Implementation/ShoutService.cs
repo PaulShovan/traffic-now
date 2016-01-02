@@ -166,5 +166,23 @@ namespace TrafficNow.Service.Implementation
                 throw;
             }
         }
+        public async Task<List<ShoutViewModel>> GetFollowersShouts(int? offset, int? count, string userId)
+        {
+            try
+            {
+                var followers = await _userRepository.GetFollowers(userId);
+                List<string> followersId = new List<string>();
+                foreach (var item in followers)
+                {
+                    followersId.Add(item.userId);
+                }
+                return await _shoutRepository.GetFollowersShouts(offset, count, followersId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

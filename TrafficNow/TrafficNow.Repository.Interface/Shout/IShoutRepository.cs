@@ -13,6 +13,7 @@ namespace TrafficNow.Repository.Interface.Shout
     {
         Task<ShoutViewModel> AddShout(ShoutModel shout);
         Task<List<ShoutViewModel>> GetShouts(int? offset, int? count);
+        Task<List<ShoutViewModel>> GetFollowersShouts(int? offset, int? count, List<string> followers);
         Task<List<ShoutViewModel>> GetShouts(int? offset, int? count, string userId);
         Task<ShoutViewModel> GetShoutById(string shoutId);
         Task<List<CommentViewModel>> GetShoutComments(string shoutId, int skip, int limit);

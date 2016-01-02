@@ -19,6 +19,30 @@ namespace TrafficNow.Service.Implementation
             _userRepository = userRepository;
         }
 
+        public async Task<bool> AddFollowee(string userId, FollowModel user)
+        {
+            try
+            {
+                return await _userRepository.AddFollowee(userId, user);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> AddFollower(string userId, FollowModel user)
+        {
+            try
+            {
+                return await _userRepository.AddFollower(userId, user);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<UserViewModel> AddOrUpdateUser(UserModel user)
         {
             try
@@ -37,6 +61,19 @@ namespace TrafficNow.Service.Implementation
             try
             {
                 return await _userRepository.GetUserById(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> IsAlreadyFollower(string userId, FollowModel user)
+        {
+            try
+            {
+                return await _userRepository.IsAlreadyFollower(userId, user);
             }
             catch (Exception)
             {
@@ -71,13 +108,37 @@ namespace TrafficNow.Service.Implementation
             }
         }
 
-        public void RegisterUser(UserModel user)
+        public async Task<bool> RegisterUser(UserModel user)
         {
             try
             {
-                _userRepository.RegisterUser(user);
+                return await _userRepository.RegisterUser(user);
             }
             catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> RemoveFollowee(string userId, FollowModel user)
+        {
+            try
+            {
+                return await _userRepository.RemoveFollowee(userId, user);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> RemoveFollower(string userId, FollowModel user)
+        {
+            try
+            {
+                return await _userRepository.RemoveFollower(userId, user);
+            }
+            catch (Exception)
             {
                 throw;
             }

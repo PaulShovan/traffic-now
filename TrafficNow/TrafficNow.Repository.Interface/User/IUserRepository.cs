@@ -15,7 +15,7 @@ namespace TrafficNow.Repository.Interface.User
         Task<UserViewModel> GetUserById(string userId);
         Task<bool> IsEmailTaken(string email);
         Task<bool> IsUserNameTaken(string userName);
-        void RegisterUser(UserModel user);
+        Task<bool> RegisterUser(UserModel user);
         Task<UserBasicModel> LoginUsingEmail(string email, string password);
         Task<UserBasicModel> LoginUsingUserName(string userName, string password);
         #region follow
@@ -27,6 +27,7 @@ namespace TrafficNow.Repository.Interface.User
         Task<bool> RemoveFollowee(string userId, FollowModel user);
         Task<List<FollowModel>> GetFollowees(string userId, int offset, int count);
         Task<List<FollowModel>> GetFollowers(string userId, int offset, int count);
+        Task<List<FollowModel>> GetFollowers(string userId);
         #endregion
     }
 }

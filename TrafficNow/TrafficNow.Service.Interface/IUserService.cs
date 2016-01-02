@@ -14,7 +14,12 @@ namespace TrafficNow.Service.Interface
         Task<UserViewModel> GetUserById(string userId);
         Task<bool> IsEmailTaken(string email);
         Task<bool> IsUserNameTaken(string userName);
-        void RegisterUser(UserModel user);
+        Task<bool> RegisterUser(UserModel user);
         Task<UserBasicModel> UserLogin(string identity, string password);
+        Task<bool> AddFollower(string userId, FollowModel user);
+        Task<bool> AddFollowee(string userId, FollowModel user);
+        Task<bool> RemoveFollower(string userId, FollowModel user);
+        Task<bool> RemoveFollowee(string userId, FollowModel user);
+        Task<bool> IsAlreadyFollower(string userId, FollowModel user);
     }
 }

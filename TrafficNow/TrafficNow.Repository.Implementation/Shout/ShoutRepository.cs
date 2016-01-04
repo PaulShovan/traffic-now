@@ -132,16 +132,30 @@ namespace TrafficNow.Repository.Implementation.Shout
             }
         }
 
-        public async Task<List<ShoutViewModel>> GetShouts(int? offset, int? count, string userId)
+        public async Task<List<ShoutViewModel>> GetShoutsOfUser(int? offset, int? count, string userId)
         {
             try
             {
                 List<ShoutViewModel> shouts = new List<ShoutViewModel>();
                 var sortBuilder = Builders<ShoutModel>.Sort;
                 var sortOrder = sortBuilder.Descending(s => s.time);
-                var projection = Builders<ShoutModel>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s=>s.loc).Exclude(s=>s.likes);
+                var projection = Builders<ShoutModel>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s=>s.loc);
                 var result = await Collection.Find(shout => shout.userId == userId).Project<ShoutModel>(projection).Sort(sortOrder).Skip(offset).Limit(count).ToListAsync();
-                result.ForEach(x => shouts.Add(x));
+                //result.ForEach(x => shouts.Add(x));
+                foreach (var shout in result)
+                {
+                    var like = shout.likes.SingleOrDefault(s => s.liker.userId == userId);
+                    if(like != null)
+                    {
+                        shout.isLikedByUser = true;
+                    }
+                    else
+                    {
+                        shout.isLikedByUser = false;
+                    }
+                    shout.likes = new List<LikerViewModel>();
+                    shouts.Add(shout);
+                }
                 return shouts;
             }
             catch (Exception e)
@@ -149,16 +163,30 @@ namespace TrafficNow.Repository.Implementation.Shout
                 throw;
             }
         }
-        public async Task<List<ShoutViewModel>> GetShouts(int? offset, int? count)
+        public async Task<List<ShoutViewModel>> GetShouts(int? offset, int? count, string userId)
         {
             try
             {
                 List<ShoutViewModel> shouts = new List<ShoutViewModel>();
                 var sortBuilder = Builders<ShoutModel>.Sort;
                 var sortOrder = sortBuilder.Descending(s => s.time);
-                var projection = Builders<ShoutModel>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s => s.loc).Exclude(s => s.likes);
+                var projection = Builders<ShoutModel>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s => s.loc);
                 var result = await Collection.Find(shout => shout.shoutId != "").Project<ShoutModel>(projection).Sort(sortOrder).Skip(offset).Limit(count).ToListAsync();
-                result.ForEach(x => shouts.Add(x));
+                //result.ForEach(x => shouts.Add(x));
+                foreach (var shout in result)
+                {
+                    var like = shout.likes.SingleOrDefault(s => s.liker.userId == userId);
+                    if (like != null)
+                    {
+                        shout.isLikedByUser = true;
+                    }
+                    else
+                    {
+                        shout.isLikedByUser = false;
+                    }
+                    shout.likes = new List<LikerViewModel>();
+                    shouts.Add(shout);
+                }
                 return shouts;
             }
             catch (Exception e)

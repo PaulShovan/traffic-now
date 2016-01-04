@@ -20,6 +20,7 @@ namespace TrafficNow.Core.Shout.ViewModel
         public List<string> attachments;
         public long time;
         public Location location;
+        public bool isLikedByUser;
         public ShoutViewModel()
         {
             comments = new List<CommentViewModel>();

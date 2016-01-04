@@ -117,7 +117,14 @@ namespace TrafficNow.Api.Controllers
         {
             try
             {
-                var shouts = await _shoutService.GetShouts(offset, count);
+                var token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                var shouts = await _shoutService.GetShouts(offset, count, user.userId);
                 return Ok(shouts);
             }
             catch (Exception e)

@@ -122,7 +122,7 @@ namespace TrafficNow.Repository.Implementation.Shout
         {
             try
             {
-                var projection = Builders<ShoutModel>.Projection.Slice(x => x.comments, skip, limit).Include(s => s.comments).Exclude("_id");
+                var projection = Builders<ShoutModel>.Projection.Include(s=>s.comments).Slice(x => x.comments, skip, limit).Exclude("_id");
                 var result = await Collection.Find(shout => shout.shoutId == shoutId).Project<ShoutModel>(projection).FirstOrDefaultAsync();
                 return result.comments;
             }

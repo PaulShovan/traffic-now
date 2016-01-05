@@ -252,7 +252,7 @@ namespace TrafficNow.Api.Controllers
                 comment.commentor = user;
                 comment.commentId = Guid.NewGuid().ToString();
                 var ack = await _shoutService.AddShoutComment(id, comment);
-                return Ok(ack);
+                return Ok(comment);
             }
             catch (Exception e)
             {

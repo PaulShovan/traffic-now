@@ -19,7 +19,7 @@ namespace TrafficNow.Api.Controllers
             _mapService = mapService;
         }
         [VersionedRoute("map/get", "aunthazel", "v1")]
-        public async Task<IHttpActionResult> GetMapPoints(double lat, double lon)
+        public async Task<IHttpActionResult> GetMapPoints(double lat, double lon, double rad = 10)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest("Invalid data");
                 }
-                var mapPoints = await _mapService.GetMapPoints(lat, lon);
+                var mapPoints = await _mapService.GetMapPoints(lat, lon, rad);
                 //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
                 return Ok(mapPoints);
             }

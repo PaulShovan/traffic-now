@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrafficNow.Core.Helpers;
 using TrafficNow.Core.User.Dto;
 using TrafficNow.Core.User.ViewModel;
 using TrafficNow.Repository.Implementation.Base;
@@ -33,7 +34,7 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
-        public async Task<UserViewModel> GetUserById(string userId)
+        public async Task<UserViewModel> GetUserById(string userId, string requesterUserId)
         {
             try
             {
@@ -57,6 +58,18 @@ namespace TrafficNow.Repository.Implementation.User
                 if (result.showUserEmail)
                 {
                     user.email = result.email;
+                }
+                if(userId != requesterUserId)
+                {
+                    var isFollowing = await IsAlreadyFollower(user.userId, new FollowModel
+                    {
+                        userId = requesterUserId
+                    });
+                    user.isFollowing = isFollowing;
+                }
+                else
+                {
+                    user.isFollowing = false;
                 }
                 return user;
             }
@@ -283,6 +296,48 @@ namespace TrafficNow.Repository.Implementation.User
             {
                 throw;
             }
+        }
+
+        public async Task<UserViewModel> UpdateUserInfo(UserInfoModel user, List<PairModel> updatedFields)
+        {
+            try
+            {
+                var update = Builders<UserModel>.Update.Set("bio", user.bio);
+                var filter = Builders<UserModel>.Filter.Eq(s => s.userId, user.userId);
+                var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude(u => u.facebookId); ;
+                foreach (var field in updatedFields)
+                {
+                    update = update.Set(field.key, field.value);  
+                }
+                var options = new FindOneAndUpdateOptions<UserModel, UserModel>();
+                options.IsUpsert = false;
+                options.ReturnDocument = ReturnDocument.After;
+                options.Projection = projection;
+                var result = await Collection.FindOneAndUpdateAsync(filter, update, options);
+                var userInfoData = new UserViewModel
+                {
+                    userId = result.userId,
+                    userName = result.userName,
+                    name = result.name,
+                    photo = result.photo,
+                    address = result.address,
+                    points = result.points,
+                    mood = result.mood,
+                    bio = result.bio,
+                    emailVerified = result.emailVerified,
+                    badges = result.badges,
+                    followeeCount = result.followeeCount,
+                    followerCount = result.followerCount,
+                    email = result.email,
+                    isFollowing = false
+                };
+                return userInfoData;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            return new UserViewModel();
         }
         #endregion follow
     }

@@ -53,8 +53,10 @@
   <ItemGroup>
     <Compile Include="Enum\Status.cs" />
     <Compile Include="Helpers\MultipartParser.cs" />
+    <Compile Include="Helpers\PairModel.cs" />
     <Compile Include="Helpers\Utility.cs" />
     <Compile Include="JsonWebToken\JwtModel.cs" />
+    <Compile Include="Map\LocationViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shout\DataModel\CommentModel.cs" />
     <Compile Include="Shout\DataModel\LikerModel.cs" />
@@ -68,6 +70,7 @@
     <Compile Include="User\Dto\FollowModel.cs" />
     <Compile Include="User\Dto\TokenModel.cs" />
     <Compile Include="User\Dto\UserBasicModel.cs" />
+    <Compile Include="User\Dto\UserInfoModel.cs" />
     <Compile Include="User\Dto\UserModel.cs" />
     <Compile Include="User\ViewModel\UserViewModel.cs" />
   </ItemGroup>

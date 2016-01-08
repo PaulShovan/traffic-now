@@ -132,6 +132,83 @@ namespace TrafficNow.Api.Controllers
                 return InternalServerError();
             }
         }
+        [VersionedRoute("user/update", "aunthazel", "v1")]
+        [HttpPut]
+        public async Task<IHttpActionResult> UpdateUserInfo()
+        {
+            try
+            {
+                string token = "";
+                var userInfo = new UserInfoModel();
+                if (!Request.Content.IsMimeMultipartContent("form-data"))
+                {
+                    return BadRequest("Unsupported media type");
+                }
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                userInfo.userId = user.userId;
+                userInfo.photo = null;
+                string s3Prefix = ConfigurationManager.AppSettings["S3Prefix"];
+                var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartStreamProvider());
+                foreach (var key in provider.FormData.AllKeys)
+                {
+                    foreach (var val in provider.FormData.GetValues(key))
+                    {
+                        if (key == "name")
+                        {
+                            userInfo.name = val.ToString().Trim();
+                        }
+                        else if (key == "email")
+                        {
+                            userInfo.email = val.ToString().Trim();
+                            if (string.IsNullOrWhiteSpace(userInfo.email))
+                            {
+                                return BadRequest("Email Is Required");
+                            }
+                            if(userInfo.email != user.email)
+                            {
+                                if (await _userService.IsEmailTaken(userInfo.email))
+                                {
+                                    return BadRequest("Email Already Taken");
+                                }
+                            }
+                        }
+                        else if (key == "password")
+                        {
+                            userInfo.password = val.ToString().Trim();
+                            if (!string.IsNullOrWhiteSpace(userInfo.password))
+                            {
+                                var hashedPassword = _passwordHasher.GetHashedPassword(userInfo.password);
+                                userInfo.password = hashedPassword;
+                            }
+                        }
+                        else if (key == "bio")
+                        {
+                            userInfo.bio = val.ToString().Trim();
+                        }
+                    }
+                }
+                foreach (var file in provider.Files)
+                {
+                    var photoUrl = user.userId + "/profile/" + "profile_pic.png";
+                    Stream stream = await file.ReadAsStreamAsync();
+                    _storageService.UploadFile("trafficnow", photoUrl, stream);
+                    userInfo.photo = s3Prefix + photoUrl;
+                }
+                var updatedUser = await _userService.UpdateUserInfo(userInfo, user);
+                var jwt = _tokenGenerator.GenerateUserToken(updatedUser);
+                var response = new UpdatedUserResponse { updatedUser = updatedUser, token = jwt.token };
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
         [VersionedRoute("user/login","aunthazel","v1")]
         [HttpPost]
         public async Task<IHttpActionResult> LoginUser(LoginModel userLogin)
@@ -169,27 +246,36 @@ namespace TrafficNow.Api.Controllers
 
         }
         [Authorize]
-        [VersionedRoute("user/get", "aunthazel", "v1")]
+        [VersionedRoute("user", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetUserById(string userId = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(userId))
+                string token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
                 {
-                    string token = "";
-                    IEnumerable<string> values;
-                    if (Request.Headers.TryGetValues("Authorization", out values))
-                    {
-                        token = values.FirstOrDefault();
-                    }
-                    var user = _tokenGenerator.GetUserFromToken(token);
-                    if (string.IsNullOrEmpty(user.userId))
-                    {
-                        return BadRequest("Invalid User");
-                    }
-                    userId = user.userId;
+                    token = values.FirstOrDefault();
                 }
-                var result = await _userService.GetUserById(userId);
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                var requesterUserId = user.userId;
+                if (string.IsNullOrWhiteSpace(userId))
+                {
+                    userId = requesterUserId;
+                }
+                var result = await _userService.GetUserById(userId, requesterUserId);
+                if(userId == requesterUserId)
+                {
+                    result.isOwnProfile = true;
+                }
+                else
+                {
+                    result.isOwnProfile = false;
+                }
                 return Ok(result);
 
             }

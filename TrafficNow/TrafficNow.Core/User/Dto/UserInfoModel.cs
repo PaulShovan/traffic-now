@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace TrafficNow.Core.User.Dto
 {
-    public class UserBasicModel
+    public class UserInfoModel
     {
-        public string userName;
         public string userId;
-        public string photo;
         public string name;
         public string email;
+        public string password;
+        public string photo;
+        public string bio;
     }
 }

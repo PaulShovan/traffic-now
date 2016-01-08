@@ -303,7 +303,7 @@ namespace TrafficNow.Api.Controllers
                 var user = _tokenGenerator.GetUserFromToken(token);
                 like.liker = user;
                 var shout = await _shoutService.AddOrRemoveLike(id, like);
-                return Ok(shout);
+                return Ok(like);
             }
             catch (Exception e)
             {

@@ -9,7 +9,6 @@ namespace TrafficNow.Core.User.ViewModel
 {
     public class UserViewModel : UserBasicModel
     {
-        public string email;
         public string address;
         public int points;
         public string mood;
@@ -18,6 +17,8 @@ namespace TrafficNow.Core.User.ViewModel
         public List<BadgeModel> badges;
         public int followerCount;
         public int followeeCount;
+        public bool isOwnProfile;
+        public bool isFollowing;
         public UserViewModel()
         {
             badges = new List<BadgeModel>();

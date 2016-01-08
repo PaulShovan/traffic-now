@@ -11,7 +11,7 @@ namespace TrafficNow.Service.Interface
     public interface IUserService
     {
         Task<UserViewModel> AddOrUpdateUser(UserModel user);
-        Task<UserViewModel> GetUserById(string userId);
+        Task<UserViewModel> GetUserById(string userId, string requesterUserId);
         Task<bool> IsEmailTaken(string email);
         Task<bool> IsUserNameTaken(string userName);
         Task<bool> RegisterUser(UserModel user);
@@ -21,5 +21,6 @@ namespace TrafficNow.Service.Interface
         Task<bool> RemoveFollower(string userId, FollowModel user);
         Task<bool> RemoveFollowee(string userId, FollowModel user);
         Task<bool> IsAlreadyFollower(string userId, FollowModel user);
+        Task<UserViewModel> UpdateUserInfo(UserInfoModel user, UserBasicModel userData);
     }
 }

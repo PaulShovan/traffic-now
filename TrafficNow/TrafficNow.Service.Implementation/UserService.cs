@@ -56,11 +56,11 @@ namespace TrafficNow.Service.Implementation
             }
         }
 
-        public async Task<UserViewModel> GetUserById(string userId)
+        public async Task<UserViewModel> GetUserById(string userId, string requesterUserId)
         {
             try
             {
-                return await _userRepository.GetUserById(userId);
+                return await _userRepository.GetUserById(userId, requesterUserId);
             }
             catch (Exception)
             {
@@ -142,6 +142,33 @@ namespace TrafficNow.Service.Implementation
             {
                 throw;
             }
+        }
+
+        public Task<UserViewModel> UpdateUserInfo(UserInfoModel user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserViewModel> UpdateUserInfo(UserInfoModel user, UserBasicModel userData)
+        {
+            List<PairModel> updatedFields = new List<PairModel>();
+            if(user.name != userData.name)
+            {
+                updatedFields.Add(new PairModel { key = "name", value = user.name });
+            }
+            if (user.email != userData.email)
+            {
+                updatedFields.Add(new PairModel { key = "email", value = user.email });
+            }
+            if (!string.IsNullOrWhiteSpace(user.password))
+            {
+                updatedFields.Add(new PairModel { key = "password", value = user.password });
+            }
+            if (!string.IsNullOrWhiteSpace(user.photo))
+            {
+                updatedFields.Add(new PairModel { key = "photo", value = user.photo });
+            }
+            return _userRepository.UpdateUserInfo(user, updatedFields);
         }
 
         public async Task<UserBasicModel> UserLogin(string identity, string password)

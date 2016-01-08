@@ -22,5 +22,7 @@ namespace TrafficNow.Service.Interface
         Task<bool> RemoveFollowee(string userId, FollowModel user);
         Task<bool> IsAlreadyFollower(string userId, FollowModel user);
         Task<UserViewModel> UpdateUserInfo(UserInfoModel user, UserBasicModel userData);
+        Task<List<FollowModel>> GetFollowees(string userId, int offset, int count);
+        Task<List<FollowModel>> GetFollowers(string userId, int offset, int count);
     }
 }

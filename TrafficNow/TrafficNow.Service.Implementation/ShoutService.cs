@@ -170,7 +170,7 @@ namespace TrafficNow.Service.Implementation
         {
             try
             {
-                var followers = await _userRepository.GetFollowers(userId);
+                var followers = await _userRepository.GetFollowees(userId);
                 List<string> followersId = new List<string>();
                 foreach (var item in followers)
                 {

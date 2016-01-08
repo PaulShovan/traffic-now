@@ -33,7 +33,6 @@ namespace TrafficNow.Api.Helpers
                 identity.AddClaim(new Claim("userId", user.userId));
                 identity.AddClaim(new Claim("userName", user.userName));
                 identity.AddClaim(new Claim("photo", user.photo));
-                identity.AddClaim(new Claim("email", user.email));
                 if (user.name != null)
                 {
                     identity.AddClaim(new Claim("name", user.name));

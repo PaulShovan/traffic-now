@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Core.Shout.DataModel;
 using TrafficNow.Core.Shout.ViewModel;
+using TrafficNow.Core.User.Dto;
 
 namespace TrafficNow.Service.Interface
 {

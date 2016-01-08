@@ -154,44 +154,44 @@ namespace TrafficNow.Api.Controllers
                 userInfo.photo = null;
                 string s3Prefix = ConfigurationManager.AppSettings["S3Prefix"];
                 var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartStreamProvider());
-                foreach (var key in provider.FormData.AllKeys)
-                {
-                    foreach (var val in provider.FormData.GetValues(key))
-                    {
-                        if (key == "name")
-                        {
-                            userInfo.name = val.ToString().Trim();
-                        }
-                        else if (key == "email")
-                        {
-                            userInfo.email = val.ToString().Trim();
-                            if (string.IsNullOrWhiteSpace(userInfo.email))
-                            {
-                                return BadRequest("Email Is Required");
-                            }
-                            if(userInfo.email != user.email)
-                            {
-                                if (await _userService.IsEmailTaken(userInfo.email))
-                                {
-                                    return BadRequest("Email Already Taken");
-                                }
-                            }
-                        }
-                        else if (key == "password")
-                        {
-                            userInfo.password = val.ToString().Trim();
-                            if (!string.IsNullOrWhiteSpace(userInfo.password))
-                            {
-                                var hashedPassword = _passwordHasher.GetHashedPassword(userInfo.password);
-                                userInfo.password = hashedPassword;
-                            }
-                        }
-                        else if (key == "bio")
-                        {
-                            userInfo.bio = val.ToString().Trim();
-                        }
-                    }
-                }
+                //foreach (var key in provider.FormData.AllKeys)
+                //{
+                //    foreach (var val in provider.FormData.GetValues(key))
+                //    {
+                //        if (key == "name")
+                //        {
+                //            userInfo.name = val.ToString().Trim();
+                //        }
+                //        else if (key == "email")
+                //        {
+                //            userInfo.email = val.ToString().Trim();
+                //            if (string.IsNullOrWhiteSpace(userInfo.email))
+                //            {
+                //                return BadRequest("Email Is Required");
+                //            }
+                //            if(userInfo.email != user.email)
+                //            {
+                //                if (await _userService.IsEmailTaken(userInfo.email))
+                //                {
+                //                    return BadRequest("Email Already Taken");
+                //                }
+                //            }
+                //        }
+                //        else if (key == "password")
+                //        {
+                //            userInfo.password = val.ToString().Trim();
+                //            if (!string.IsNullOrWhiteSpace(userInfo.password))
+                //            {
+                //                var hashedPassword = _passwordHasher.GetHashedPassword(userInfo.password);
+                //                userInfo.password = hashedPassword;
+                //            }
+                //        }
+                //        else if (key == "bio")
+                //        {
+                //            userInfo.bio = val.ToString().Trim();
+                //        }
+                //    }
+                //}
                 foreach (var file in provider.Files)
                 {
                     var photoUrl = user.userId + "/profile/" + "profile_pic.png";
@@ -319,7 +319,8 @@ namespace TrafficNow.Api.Controllers
                     bool followeeDone = await _userService.RemoveFollowee(user.userId, userToFollow);
                     if (followerDone && followeeDone)
                     {
-                        return Ok("Unfollowed successfully");
+                        var message = new ResponseModel { message = "Unfollowed successfully" };
+                        return Ok(message);
                     }
                 }
                 else
@@ -328,10 +329,71 @@ namespace TrafficNow.Api.Controllers
                     bool followeeDone = await _userService.AddFollowee(user.userId, userToFollow);
                     if(followerDone && followeeDone)
                     {
-                        return Ok("Followed successfully");
+                        var message = new ResponseModel { message = "Followed successfully" };
+                        return Ok(message);
                     }
                 }
                 return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [Authorize]
+        [VersionedRoute("user/followers", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetFollowers(string userId = "", int offset=0, int count=10)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userId))
+                {
+                    string token = "";
+                    IEnumerable<string> values;
+                    if (Request.Headers.TryGetValues("Authorization", out values))
+                    {
+                        token = values.FirstOrDefault();
+                    }
+                    var user = _tokenGenerator.GetUserFromToken(token);
+                    if (string.IsNullOrWhiteSpace(user.userId))
+                    {
+                        return BadRequest("Invalid User");
+                    }
+                    userId = user.userId;
+                }
+                var followers = await _userService.GetFollowers(userId, offset, count);
+                return Ok(followers);
+
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [Authorize]
+        [VersionedRoute("user/followees", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetFollowees(string userId = "", int offset=0, int count=10)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userId))
+                {
+                    string token = "";
+                    IEnumerable<string> values;
+                    if (Request.Headers.TryGetValues("Authorization", out values))
+                    {
+                        token = values.FirstOrDefault();
+                    }
+                    var user = _tokenGenerator.GetUserFromToken(token);
+                    if (string.IsNullOrWhiteSpace(user.userId))
+                    {
+                        return BadRequest("Invalid User");
+                    }
+                    userId = user.userId;
+                }
+                var followees = await _userService.GetFollowees(userId, offset, count);
+                return Ok(followees);
+
             }
             catch (Exception e)
             {

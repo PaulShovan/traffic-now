@@ -30,6 +30,7 @@ namespace TrafficNow.Repository.Interface.User
         Task<List<FollowModel>> GetFollowees(string userId, int offset, int count);
         Task<List<FollowModel>> GetFollowers(string userId, int offset, int count);
         Task<List<FollowModel>> GetFollowers(string userId);
+        Task<List<FollowModel>> GetFollowees(string userId);
         #endregion
     }
 }

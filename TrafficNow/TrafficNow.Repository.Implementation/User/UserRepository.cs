@@ -214,7 +214,20 @@ namespace TrafficNow.Repository.Implementation.User
         {
             try
             {
-                var projection = Builders<UserModel>.Projection.Slice(x => x.followees, offset, count).Include(u => u.followees).Exclude("_id");
+                var projection = Builders<UserModel>.Projection.Include(u => u.followees).Slice(x => x.followees, offset, count).Exclude("_id");
+                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
+                return result.followees;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<List<FollowModel>> GetFollowees(string userId)
+        {
+            try
+            {
+                var projection = Builders<UserModel>.Projection.Include(x => x.followees).Exclude("_id");
                 var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result.followees;
             }
@@ -227,7 +240,7 @@ namespace TrafficNow.Repository.Implementation.User
         {
             try
             {
-                var projection = Builders<UserModel>.Projection.Slice(x => x.followers, offset, count).Include(u => u.followers).Exclude("_id");
+                var projection = Builders<UserModel>.Projection.Include(u => u.followers).Slice(x => x.followers, offset, count).Exclude("_id");
                 var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result.followers;
             }
@@ -302,13 +315,14 @@ namespace TrafficNow.Repository.Implementation.User
         {
             try
             {
-                var update = Builders<UserModel>.Update.Set("bio", user.bio);
+                //var update = Builders<UserModel>.Update.Set("bio", user.bio);
+                var update = Builders<UserModel>.Update.Set(u=>u.photo, user.photo);
                 var filter = Builders<UserModel>.Filter.Eq(s => s.userId, user.userId);
                 var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude(u => u.facebookId); ;
-                foreach (var field in updatedFields)
-                {
-                    update = update.Set(field.key, field.value);  
-                }
+                //foreach (var field in updatedFields)
+                //{
+                //    update = update.Set(field.key, field.value);  
+                //}
                 var options = new FindOneAndUpdateOptions<UserModel, UserModel>();
                 options.IsUpsert = false;
                 options.ReturnDocument = ReturnDocument.After;
@@ -337,7 +351,6 @@ namespace TrafficNow.Repository.Implementation.User
             {
                 throw;
             }
-            return new UserViewModel();
         }
         #endregion follow
     }

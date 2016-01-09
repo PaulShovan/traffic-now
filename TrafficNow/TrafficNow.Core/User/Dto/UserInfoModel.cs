@@ -12,6 +12,7 @@ namespace TrafficNow.Core.User.Dto
         public string name;
         public string email;
         public string password;
+        public string oldPassword;
         public string photo;
         public string bio;
     }

@@ -178,18 +178,18 @@ namespace TrafficNow.Service.Implementation
         public Task<UserViewModel> UpdateUserInfo(UserInfoModel user, UserBasicModel userData)
         {
             List<PairModel> updatedFields = new List<PairModel>();
-            //if(user.name != userData.name)
-            //{
-            //    updatedFields.Add(new PairModel { key = "name", value = user.name });
-            //}
-            //if (user.email != userData.email)
-            //{
-            //    updatedFields.Add(new PairModel { key = "email", value = user.email });
-            //}
-            //if (!string.IsNullOrWhiteSpace(user.password))
-            //{
-            //    updatedFields.Add(new PairModel { key = "password", value = user.password });
-            //}
+            if (user.name != userData.name)
+            {
+                updatedFields.Add(new PairModel { key = "name", value = user.name });
+            }
+            if (user.email != userData.email)
+            {
+                updatedFields.Add(new PairModel { key = "email", value = user.email });
+            }
+            if (!string.IsNullOrWhiteSpace(user.password))
+            {
+                updatedFields.Add(new PairModel { key = "password", value = user.password });
+            }
             if (!string.IsNullOrWhiteSpace(user.photo))
             {
                 updatedFields.Add(new PairModel { key = "photo", value = user.photo });

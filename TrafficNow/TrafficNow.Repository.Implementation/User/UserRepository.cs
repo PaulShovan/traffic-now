@@ -315,14 +315,14 @@ namespace TrafficNow.Repository.Implementation.User
         {
             try
             {
-                //var update = Builders<UserModel>.Update.Set("bio", user.bio);
-                var update = Builders<UserModel>.Update.Set(u=>u.photo, user.photo);
+                var update = Builders<UserModel>.Update.Set("bio", user.bio);
+                //var update = Builders<UserModel>.Update.Set(u=>u.photo, user.photo);
                 var filter = Builders<UserModel>.Filter.Eq(s => s.userId, user.userId);
                 var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude(u => u.facebookId); ;
-                //foreach (var field in updatedFields)
-                //{
-                //    update = update.Set(field.key, field.value);  
-                //}
+                foreach (var field in updatedFields)
+                {
+                    update = update.Set(field.key, field.value);
+                }
                 var options = new FindOneAndUpdateOptions<UserModel, UserModel>();
                 options.IsUpsert = false;
                 options.ReturnDocument = ReturnDocument.After;

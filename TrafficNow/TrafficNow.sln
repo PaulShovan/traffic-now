@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.DependencyInject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Api", "TrafficNow.Api\TrafficNow.Api.csproj", "{05D2BCF3-68CE-450E-973F-D5E37592BB00}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.EmailServer", "TrafficNow.EmailServer\TrafficNow.EmailServer.csproj", "{056EAB46-643D-4891-83A8-7C93B2B60451}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05D2BCF3-68CE-450E-973F-D5E37592BB00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{056EAB46-643D-4891-83A8-7C93B2B60451}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{056EAB46-643D-4891-83A8-7C93B2B60451}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{056EAB46-643D-4891-83A8-7C93B2B60451}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{056EAB46-643D-4891-83A8-7C93B2B60451}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,5 +81,6 @@ Global
 		{DB19FF4E-BA9E-4E06-8F89-AAC32FC82868} = {CA52832A-49AE-4F64-AAFC-CE350226999B}
 		{805FBF72-942F-43DC-9CDA-929B43A9045C} = {FB2B5790-8CB9-4C97-8E02-641811D62A9D}
 		{05D2BCF3-68CE-450E-973F-D5E37592BB00} = {1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}
+		{056EAB46-643D-4891-83A8-7C93B2B60451} = {1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}
 	EndGlobalSection
 EndGlobal

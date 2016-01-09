@@ -154,44 +154,61 @@ namespace TrafficNow.Api.Controllers
                 userInfo.photo = null;
                 string s3Prefix = ConfigurationManager.AppSettings["S3Prefix"];
                 var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartStreamProvider());
-                //foreach (var key in provider.FormData.AllKeys)
-                //{
-                //    foreach (var val in provider.FormData.GetValues(key))
-                //    {
-                //        if (key == "name")
-                //        {
-                //            userInfo.name = val.ToString().Trim();
-                //        }
-                //        else if (key == "email")
-                //        {
-                //            userInfo.email = val.ToString().Trim();
-                //            if (string.IsNullOrWhiteSpace(userInfo.email))
-                //            {
-                //                return BadRequest("Email Is Required");
-                //            }
-                //            if(userInfo.email != user.email)
-                //            {
-                //                if (await _userService.IsEmailTaken(userInfo.email))
-                //                {
-                //                    return BadRequest("Email Already Taken");
-                //                }
-                //            }
-                //        }
-                //        else if (key == "password")
-                //        {
-                //            userInfo.password = val.ToString().Trim();
-                //            if (!string.IsNullOrWhiteSpace(userInfo.password))
-                //            {
-                //                var hashedPassword = _passwordHasher.GetHashedPassword(userInfo.password);
-                //                userInfo.password = hashedPassword;
-                //            }
-                //        }
-                //        else if (key == "bio")
-                //        {
-                //            userInfo.bio = val.ToString().Trim();
-                //        }
-                //    }
-                //}
+                foreach (var key in provider.FormData.AllKeys)
+                {
+                    foreach (var val in provider.FormData.GetValues(key))
+                    {
+                        if (key == "name")
+                        {
+                            userInfo.name = val.ToString().Trim();
+                        }
+                        else if (key == "email")
+                        {
+                            userInfo.email = val.ToString().Trim();
+                            if (string.IsNullOrWhiteSpace(userInfo.email))
+                            {
+                                return BadRequest("Email Is Required");
+                            }
+                            if (userInfo.email != user.email)
+                            {
+                                if (await _userService.IsEmailTaken(userInfo.email))
+                                {
+                                    return BadRequest("Email Already Taken");
+                                }
+                            }
+                        }
+                        else if (key == "bio")
+                        {
+                            userInfo.bio = val.ToString().Trim();
+                        }
+                        else if (key == "password")
+                        {
+                            userInfo.password = val.ToString().Trim();
+                            if (!string.IsNullOrWhiteSpace(userInfo.password))
+                            {
+                                var hashedPassword = _passwordHasher.GetHashedPassword(userInfo.password);
+                                userInfo.password = hashedPassword;
+                            }
+                        }
+                        else if (key == "oldPassword")
+                        {
+                            userInfo.oldPassword = val.ToString().Trim();
+                            if (!string.IsNullOrWhiteSpace(userInfo.oldPassword))
+                            {
+                                var hashedPassword = _passwordHasher.GetHashedPassword(userInfo.oldPassword);
+                                userInfo.oldPassword = hashedPassword;
+                            }
+                        }
+                    }
+                }
+                if(!string.IsNullOrWhiteSpace(userInfo.password) && !string.IsNullOrWhiteSpace(userInfo.oldPassword))
+                {
+                    var result = await _userService.UserLogin(user.userName, userInfo.oldPassword);
+                    if(result == null)
+                    {
+                        return BadRequest("Invalid User");
+                    }
+                }
                 foreach (var file in provider.Files)
                 {
                     var photoUrl = user.userId + "/profile/" + "profile_pic.png";

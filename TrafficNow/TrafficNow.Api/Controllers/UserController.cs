@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TrafficNow.Api.Helpers;
@@ -117,7 +118,7 @@ namespace TrafficNow.Api.Controllers
                 var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                 user.photo = s3Prefix+photoUrl;
                 var res = await _userService.RegisterUser(user);
-                var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.png");
+                var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.jpg");
                 if (File.Exists(defaultPath))
                 {
                     FileStream fileStream = File.OpenRead(defaultPath);
@@ -211,14 +212,14 @@ namespace TrafficNow.Api.Controllers
                 }
                 foreach (var file in provider.Files)
                 {
-                    var photoUrl = user.userId + "/profile/" + "profile_pic.png";
+                    var photoUrl = user.userId + "/profile/" + "profile_pic.jpg";
                     Stream stream = await file.ReadAsStreamAsync();
                     _storageService.UploadFile("trafficnow", photoUrl, stream);
                     userInfo.photo = s3Prefix + photoUrl;
                 }
                 var updatedUser = await _userService.UpdateUserInfo(userInfo, user);
                 var jwt = _tokenGenerator.GenerateUserToken(updatedUser);
-                var response = new UpdatedUserResponse { updatedUser = updatedUser, token = jwt.token };
+                var response = new UpdatedUserResponse { profile = updatedUser, updatedToken = jwt};
                 return Ok(response);
             }
             catch (Exception e)
@@ -250,7 +251,8 @@ namespace TrafficNow.Api.Controllers
                         userId = loggedInUser.userId,
                         name = loggedInUser.name,
                         userName = loggedInUser.userName,
-                        photo = loggedInUser.photo
+                        photo = loggedInUser.photo,
+                        email = loggedInUser.email
                     };
                     var jwt = _tokenGenerator.GenerateUserToken(userModel);
                     return Ok(jwt);
@@ -415,6 +417,63 @@ namespace TrafficNow.Api.Controllers
             catch (Exception e)
             {
                 return InternalServerError();
+            }
+        }
+
+        [VersionedRoute("user/renewpassword", "aunthazel", "v1")]
+        public IHttpActionResult GetNewPassword(string userEmail)
+        {
+            //try
+            //{
+            //    if (string.IsNullOrWhiteSpace(userEmail))
+            //    {
+            //        return BadRequest("Invalid Email Address");
+            //    }
+            //    if (await _userService.IsEmailTaken(userEmail))
+            //    {
+            //        MailMessage mailMessage = new MailMessage();
+            //        mailMessage.From = new MailAddress("gypsy.shovan@gmail.com");
+            //        mailMessage.To.Add(new MailAddress("shovan066@gmail.com"));
+            //        mailMessage.Subject = "Email Checking Asynchronously";
+            //        mailMessage.Body = "Email test asynchronous";
+            //        mailMessage.IsBodyHtml = true;//to send mail in html or not
+
+            //        SmtpClient smtpClient = new SmtpClient("smtp.live.com", 587);//portno here
+            //        //smtpClient.Host = "smtp.gmail.com";
+            //        smtpClient.EnableSsl = false; //True or False depends on SSL Require or not
+            //        smtpClient.Credentials = new NetworkCredential("gypsy.shovan@gmail.com", "gypsyCoder066");
+            //        //smtpClient.UseDefaultCredentials = true; //true or false depends on you want to default credentials or not
+            //        Object mailState = mailMessage;
+
+            //        smtpClient.SendCompleted += new SendCompletedEventHandler(smtpClient_SendCompleted);
+            //        try
+            //        {
+            //            smtpClient.SendAsync(mailMessage, mailState);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //    return Ok(new ResponseModel {message="Email Has Been Sent"});
+            //}
+            //catch (Exception e)
+            //{
+            //    return InternalServerError(e);
+            //}
+            return Ok(new ResponseModel { message = "Email Has Been Sent" });
+        }
+        private void smtpClient_SendCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            MailMessage mailMessage = e.UserState as MailMessage;
+            if (e.Cancelled || e.Error != null)
+            {
+
+                
+            }
+            else
+            {
+                //return.Write("Email sent successfully");
             }
         }
     }

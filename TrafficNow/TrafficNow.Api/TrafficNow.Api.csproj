@@ -192,7 +192,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\DefaultProfilePic\profile_pic.png" />
+    <Content Include="App_Data\DefaultProfilePic\profile_pic.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

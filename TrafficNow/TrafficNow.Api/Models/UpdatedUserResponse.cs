@@ -9,11 +9,12 @@ namespace TrafficNow.Api.Models
 {
     public class UpdatedUserResponse
     {
-        public UserViewModel updatedUser;
-        public string token;
+        public UserViewModel profile;
+        public JwtModel updatedToken;
         public UpdatedUserResponse()
         {
-            updatedUser = new UserViewModel();
+            profile = new UserViewModel();
+            updatedToken = new JwtModel();
         }
     }
 }

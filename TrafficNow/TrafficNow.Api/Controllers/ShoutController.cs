@@ -153,7 +153,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var shouts = await _shoutService.GetShouts(offset, count, userId);
+                var shouts = await _shoutService.GetShoutsOfUser(offset, count, userId);
                 return Ok(shouts);
             }
             catch (Exception e)

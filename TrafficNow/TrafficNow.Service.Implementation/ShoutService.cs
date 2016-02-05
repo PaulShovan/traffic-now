@@ -81,7 +81,7 @@ namespace TrafficNow.Service.Implementation
         {
             try
             {
-                return await _shoutRepository.GetShouts(offset, count, userId);
+                return await _shoutRepository.GetShoutsOfUser(offset, count, userId);
             }
             catch (Exception e)
             {

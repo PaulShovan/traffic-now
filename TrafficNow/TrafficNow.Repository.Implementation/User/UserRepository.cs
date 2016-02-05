@@ -123,7 +123,8 @@ namespace TrafficNow.Repository.Implementation.User
                     .Include(u => u.userId)
                     .Include(u => u.photo)
                     .Include(u => u.name)
-                    .Include(u => u.userName);
+                    .Include(u => u.userName)
+                    .Include(u => u.email);
                 var result = await Collection.Find(filter).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result;
             }
@@ -143,7 +144,8 @@ namespace TrafficNow.Repository.Implementation.User
                     .Include(u => u.userId)
                     .Include(u => u.photo)
                     .Include(u => u.name)
-                    .Include(u => u.userName);
+                    .Include(u => u.userName)
+                    .Include(u => u.email);
                 var result = await Collection.Find(filter).Project<UserModel>(projection).FirstOrDefaultAsync();
                 return result;
             }

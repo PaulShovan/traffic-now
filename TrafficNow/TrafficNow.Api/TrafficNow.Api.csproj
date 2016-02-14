@@ -240,6 +240,10 @@
       <Project>{805fbf72-942f-43dc-9cda-929b43a9045c}</Project>
       <Name>TrafficNow.DependencyInjection</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TrafficNow.Repository.Interface\TrafficNow.Repository.Interface.csproj">
+      <Project>{e15f113a-ecd1-4579-8026-2e08eca15d2c}</Project>
+      <Name>TrafficNow.Repository.Interface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TrafficNow.Service.Interface\TrafficNow.Service.Interface.csproj">
       <Project>{6f6355c9-a8cc-451d-b125-2ade25cee4a0}</Project>
       <Name>TrafficNow.Service.Interface</Name>

@@ -66,56 +66,6 @@ namespace TrafficNow.Service.Implementation
             }
 
         }
-        public async Task<List<ShoutViewModel>> GetShouts(int? offset, int? count, string userId)
-        {
-            try
-            {
-                return await _shoutRepository.GetShouts(offset, count, userId);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<List<ShoutViewModel>> GetShoutsOfUser(int? offset, int? count, string userId)
-        {
-            try
-            {
-                return await _shoutRepository.GetShoutsOfUser(offset, count, userId);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-
-        public async Task<ShoutViewModel> GetShoutById(string shoutId)
-        {
-            try
-            {
-                var shout = await _shoutRepository.GetShoutById(shoutId);
-                return shout;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<List<CommentViewModel>> GetShoutComments(string shoutId, int skip, int limit)
-        {
-            try
-            {
-                var comments = await _shoutRepository.GetShoutComments(shoutId, skip, limit);
-                return comments;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
         public async Task<CommentViewModel> AddShoutComment(string shoutId, CommentModel comment)
         {
             try
@@ -149,20 +99,6 @@ namespace TrafficNow.Service.Implementation
             }
             catch (Exception)
             {
-                throw;
-            }
-        }
-
-        public async Task<List<LikerViewModel>> GetLikes(string shoutId)
-        {
-            try
-            {
-                var likers = await _shoutRepository.GetLikes(shoutId);
-                return likers;
-            }
-            catch (Exception)
-            {
-
                 throw;
             }
         }

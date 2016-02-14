@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMailService.cs" />
     <Compile Include="IMapService.cs" />
     <Compile Include="IShoutService.cs" />
     <Compile Include="IUserService.cs" />

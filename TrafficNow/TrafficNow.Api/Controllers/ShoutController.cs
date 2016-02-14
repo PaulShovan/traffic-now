@@ -11,6 +11,7 @@ using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Core.Helpers;
 using TrafficNow.Core.Shout.DataModel;
+using TrafficNow.Repository.Interface.Shout;
 using TrafficNow.Service.Interface;
 
 namespace TrafficNow.Api.Controllers
@@ -19,11 +20,13 @@ namespace TrafficNow.Api.Controllers
     public class ShoutController : ApiController
     {
         private IShoutService _shoutService;
+        private IShoutRepository _shoutRepository;
         private StorageService _storageService;
         private TokenGenerator _tokenGenerator;
-        public ShoutController(IShoutService shoutService)
+        public ShoutController(IShoutService shoutService, IShoutRepository shoutRepository)
         {
             _shoutService = shoutService;
+            _shoutRepository = shoutRepository;
             _storageService = new StorageService();
             _tokenGenerator = new TokenGenerator();
         }
@@ -124,7 +127,7 @@ namespace TrafficNow.Api.Controllers
                     token = values.FirstOrDefault();
                 }
                 var user = _tokenGenerator.GetUserFromToken(token);
-                var shouts = await _shoutService.GetShouts(offset, count, user.userId);
+                var shouts = await _shoutRepository.GetShouts(offset, count, user.userId);
                 return Ok(shouts);
             }
             catch (Exception e)
@@ -153,7 +156,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var shouts = await _shoutService.GetShoutsOfUser(offset, count, userId);
+                var shouts = await _shoutRepository.GetShoutsOfUser(offset, count, userId);
                 return Ok(shouts);
             }
             catch (Exception e)
@@ -198,7 +201,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var shout = await _shoutService.GetShoutById(id);
+                var shout = await _shoutRepository.GetShoutById(id);
                 if (shout == null)
                 {
                     return NotFound();
@@ -222,7 +225,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var shout = await _shoutService.GetShoutComments(id, skip, limit);
+                var shout = await _shoutRepository.GetShoutComments(id, skip, limit);
                 return Ok(shout);
             }
             catch (Exception e)
@@ -270,7 +273,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var likers = await _shoutService.GetLikes(id);
+                var likers = await _shoutRepository.GetLikes(id);
                 if (likers == null)
                 {
                     return NotFound();

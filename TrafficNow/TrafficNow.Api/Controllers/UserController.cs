@@ -13,6 +13,7 @@ using TrafficNow.Api.Helpers;
 using TrafficNow.Api.Models;
 using TrafficNow.Core.User.Dto;
 using TrafficNow.Core.User.ViewModel;
+using TrafficNow.Repository.Interface.User;
 using TrafficNow.Service.Interface;
 
 namespace TrafficNow.Api.Controllers
@@ -21,13 +22,15 @@ namespace TrafficNow.Api.Controllers
     public class UserController : ApiController
     {
         private IUserService _userService;
+        private IUserRepository _userRepository;
         private TokenGenerator _tokenGenerator = new TokenGenerator();
         private PasswordHasher _passwordHasher = null;
         private StorageService _storageService = null;
         string s3Prefix = ConfigurationManager.AppSettings["S3Prefix"];
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IUserRepository userRepository)
         {
             _userService = userService;
+            _userRepository = userRepository;
             _passwordHasher = new PasswordHasher();
             _storageService = new StorageService();
         }
@@ -73,7 +76,7 @@ namespace TrafficNow.Api.Controllers
                 var photoUrl = fbUser.userId + "/profile/" + "profile_pic.png";
                 var defaultPath = fbUser.photo;
                 fbUser.photo = s3Prefix + photoUrl;
-                var result = await _userService.AddOrUpdateUser(fbUser);
+                var result = await _userRepository.AddOrUpdateUser(fbUser);
                 WebRequest req = WebRequest.Create(defaultPath);
                 WebResponse response = req.GetResponse();
                 using (var stream1 = response.GetResponseStream())
@@ -102,11 +105,11 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest("Invalid Registration Data");
                 }
-                if(await _userService.IsEmailTaken(user.email))
+                if(await _userRepository.IsEmailTaken(user.email))
                 {
                     return BadRequest("Email Already Taken");
                 }
-                if (await _userService.IsUserNameTaken(user.userName))
+                if (await _userRepository.IsUserNameTaken(user.userName))
                 {
                     return BadRequest("Username Already Taken");
                 }
@@ -117,7 +120,7 @@ namespace TrafficNow.Api.Controllers
                 user.showUserEmail = true;
                 var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                 user.photo = s3Prefix+photoUrl;
-                var res = await _userService.RegisterUser(user);
+                var res = await _userRepository.RegisterUser(user);
                 var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.jpg");
                 if (File.Exists(defaultPath))
                 {
@@ -172,7 +175,7 @@ namespace TrafficNow.Api.Controllers
                             }
                             if (userInfo.email != user.email)
                             {
-                                if (await _userService.IsEmailTaken(userInfo.email))
+                                if (await _userRepository.IsEmailTaken(userInfo.email))
                                 {
                                     return BadRequest("Email Already Taken");
                                 }
@@ -286,7 +289,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     userId = requesterUserId;
                 }
-                var result = await _userService.GetUserById(userId, requesterUserId);
+                var result = await _userRepository.GetUserById(userId, requesterUserId);
                 if(userId == requesterUserId)
                 {
                     result.isOwnProfile = true;
@@ -332,10 +335,10 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest("Invalid User");
                 }
-                if (await _userService.IsAlreadyFollower(userToFollow.userId, user))
+                if (await _userRepository.IsAlreadyFollower(userToFollow.userId, user))
                 {
-                    bool followerDone = await _userService.RemoveFollower(userToFollow.userId, user);
-                    bool followeeDone = await _userService.RemoveFollowee(user.userId, userToFollow);
+                    bool followerDone = await _userRepository.RemoveFollower(userToFollow.userId, user);
+                    bool followeeDone = await _userRepository.RemoveFollowee(user.userId, userToFollow);
                     if (followerDone && followeeDone)
                     {
                         var message = new ResponseModel { message = "Unfollowed successfully" };
@@ -344,8 +347,8 @@ namespace TrafficNow.Api.Controllers
                 }
                 else
                 {
-                    bool followerDone = await _userService.AddFollower(userToFollow.userId, user);
-                    bool followeeDone = await _userService.AddFollowee(user.userId, userToFollow);
+                    bool followerDone = await _userRepository.AddFollower(userToFollow.userId, user);
+                    bool followeeDone = await _userRepository.AddFollowee(user.userId, userToFollow);
                     if(followerDone && followeeDone)
                     {
                         var message = new ResponseModel { message = "Followed successfully" };
@@ -380,7 +383,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var followers = await _userService.GetFollowers(userId, offset, count);
+                var followers = await _userRepository.GetFollowers(userId, offset, count);
                 return Ok(followers);
 
             }
@@ -410,7 +413,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var followees = await _userService.GetFollowees(userId, offset, count);
+                var followees = await _userRepository.GetFollowees(userId, offset, count);
                 return Ok(followees);
 
             }

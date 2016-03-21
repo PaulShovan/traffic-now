@@ -80,9 +80,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrafficNow.Core\TrafficNow.Core.csproj">
-      <Project>{412a3711-72ba-45fb-842f-36b0b304ea11}</Project>
-      <Name>TrafficNow.Core</Name>
+    <ProjectReference Include="..\TrafficNow.Model\TrafficNow.Model.csproj">
+      <Project>{c2ec15a7-7baa-467d-820e-ebc1255824e9}</Project>
+      <Name>TrafficNow.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\TrafficNow.Repository.Implementation\TrafficNow.Repository.Implementation.csproj">
       <Project>{2d91abaf-0452-4485-b057-d2eca709a61a}</Project>

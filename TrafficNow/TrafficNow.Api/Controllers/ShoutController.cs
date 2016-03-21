@@ -9,8 +9,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using TrafficNow.Api.Helpers;
+using TrafficNow.Api.Response;
 using TrafficNow.Core.Helpers;
-using TrafficNow.Core.Shout.DataModel;
+using TrafficNow.Model.Shout.DbModels;
+using TrafficNow.Model.Shout.ViewModels;
+using TrafficNow.Model.User.DbModels;
 using TrafficNow.Repository.Interface.Shout;
 using TrafficNow.Service.Interface;
 
@@ -38,7 +41,7 @@ namespace TrafficNow.Api.Controllers
             try
             {
                 string token = "";
-                var shout = new ShoutModel();
+                var shout = new Shout();
                 if (!Request.Content.IsMimeMultipartContent("form-data"))
                 {
                     return BadRequest("Unsupported media type");
@@ -107,6 +110,7 @@ namespace TrafficNow.Api.Controllers
                     }
                 }
                 var resultShout = await _shoutService.AddShout(shout);
+                //var response = new GenericResponse<ShoutViewModel>(resultShout);
                 return Ok(resultShout);
             }
             catch (Exception e)
@@ -128,6 +132,38 @@ namespace TrafficNow.Api.Controllers
                 }
                 var user = _tokenGenerator.GetUserFromToken(token);
                 var shouts = await _shoutRepository.GetShouts(offset, count, user.userId);
+                //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
+                return Ok(shouts);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [Authorize]
+        [VersionedRoute("shouts/nearbybuzz", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetNearbyBuzz(double lat = 0, double lon = 0, double rad = 10)
+        {
+            try
+            {
+                if(rad < 0)
+                {
+                    return BadRequest();
+                }
+                rad = rad / 1609.344;
+                var token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                var shouts = await _shoutRepository.GetNearbyShouts(lat, lon, rad, user.userId);
+                //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shouts);
             }
             catch (Exception e)
@@ -157,6 +193,7 @@ namespace TrafficNow.Api.Controllers
                     userId = user.userId;
                 }
                 var shouts = await _shoutRepository.GetShoutsOfUser(offset, count, userId);
+                //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shouts);
             }
             catch (Exception e)
@@ -184,6 +221,7 @@ namespace TrafficNow.Api.Controllers
                 }
                 userId = user.userId;
                 var shouts = await _shoutService.GetFollowersShouts(offset, count, userId);
+                //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shouts);
             }
             catch (Exception e)
@@ -206,7 +244,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return NotFound();
                 }
-                //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
+                //var response = new GenericResponse<ShoutViewModel>(shout);
                 return Ok(shout);
             }
             catch (Exception e)
@@ -226,6 +264,7 @@ namespace TrafficNow.Api.Controllers
                     return BadRequest();
                 }
                 var shout = await _shoutRepository.GetShoutComments(id, skip, limit);
+                //var response = new GenericResponse<List<Comment>>(shout);
                 return Ok(shout);
             }
             catch (Exception e)
@@ -237,7 +276,7 @@ namespace TrafficNow.Api.Controllers
         [Authorize]
         [HttpPost]
         [VersionedRoute("shout/{id}/comments/add", "aunthazel", "v1")]
-        public async Task<IHttpActionResult> AddShoutComment(string id, CommentModel comment)
+        public async Task<IHttpActionResult> AddShoutComment(string id, Comment comment)
         {
             try
             {
@@ -255,7 +294,8 @@ namespace TrafficNow.Api.Controllers
                 comment.commentor = user;
                 comment.commentId = Guid.NewGuid().ToString();
                 var ack = await _shoutService.AddShoutComment(id, comment);
-                return Ok(comment);
+                //var response = new GenericResponse<Comment>(ack);
+                return Ok(ack);
             }
             catch (Exception e)
             {
@@ -278,6 +318,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return NotFound();
                 }
+                //var response = new GenericResponse<List<UserBasicInformation>>(likers);
                 return Ok(likers);
             }
             catch (Exception e)
@@ -289,7 +330,7 @@ namespace TrafficNow.Api.Controllers
         [Authorize]
         [HttpPost]
         [VersionedRoute("shout/{id}/likes/addorremove", "aunthazel", "v1")]
-        public async Task<IHttpActionResult> AddOrRemoveLike(string id, LikerModel like)
+        public async Task<IHttpActionResult> AddOrRemoveLike(string id, UserBasicInformation like)
         {
             try
             {
@@ -304,9 +345,9 @@ namespace TrafficNow.Api.Controllers
                     token = values.FirstOrDefault();
                 }
                 var user = _tokenGenerator.GetUserFromToken(token);
-                like.liker = user;
+                like = user;
                 var shout = await _shoutService.AddOrRemoveLike(id, like);
-                return Ok(like);
+                return Ok();
             }
             catch (Exception e)
             {

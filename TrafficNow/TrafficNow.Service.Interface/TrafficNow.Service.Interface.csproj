@@ -40,16 +40,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDeviceService.cs" />
+    <Compile Include="IFollowerService.cs" />
+    <Compile Include="IFollowingService.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="IMapService.cs" />
+    <Compile Include="INotificationService.cs" />
+    <Compile Include="IPointService.cs" />
     <Compile Include="IShoutService.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrafficNow.Core\TrafficNow.Core.csproj">
-      <Project>{412a3711-72ba-45fb-842f-36b0b304ea11}</Project>
-      <Name>TrafficNow.Core</Name>
+    <ProjectReference Include="..\TrafficNow.Model\TrafficNow.Model.csproj">
+      <Project>{c2ec15a7-7baa-467d-820e-ebc1255824e9}</Project>
+      <Name>TrafficNow.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\TrafficNow.Repository.Interface\TrafficNow.Repository.Interface.csproj">
       <Project>{e15f113a-ecd1-4579-8026-2e08eca15d2c}</Project>

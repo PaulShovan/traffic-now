@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,7 +55,10 @@
   <ItemGroup>
     <Compile Include="Base\Repository.cs" />
     <Compile Include="Base\TrafficNowContext.cs" />
+    <Compile Include="Device\DeviceStatusRepository.cs" />
     <Compile Include="Map\MapRepository.cs" />
+    <Compile Include="Notification\NotificationRepository.cs" />
+    <Compile Include="Point\PointRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\SettingsData.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -62,6 +66,8 @@
       <DependentUpon>SettingsData.settings</DependentUpon>
     </Compile>
     <Compile Include="Shout\ShoutRepository.cs" />
+    <Compile Include="UserConnections\FollowerRepository.cs" />
+    <Compile Include="UserConnections\FollowingRepository.cs" />
     <Compile Include="User\UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,15 +79,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrafficNow.Core\TrafficNow.Core.csproj">
-      <Project>{412a3711-72ba-45fb-842f-36b0b304ea11}</Project>
-      <Name>TrafficNow.Core</Name>
+    <ProjectReference Include="..\TrafficNow.Model\TrafficNow.Model.csproj">
+      <Project>{c2ec15a7-7baa-467d-820e-ebc1255824e9}</Project>
+      <Name>TrafficNow.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\TrafficNow.Repository.Interface\TrafficNow.Repository.Interface.csproj">
       <Project>{e15f113a-ecd1-4579-8026-2e08eca15d2c}</Project>
       <Name>TrafficNow.Repository.Interface</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

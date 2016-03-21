@@ -1,0 +1,131 @@
+﻿using PushSharp;
+using PushSharp.Android;
+using PushSharp.Core;
+using System;
+using TrafficNow.Service.Interface;
+using System.Threading.Tasks;
+using TrafficNow.Model.NotificationModel;
+using TrafficNow.Model.User.DbModels;
+using TrafficNow.Core.Helpers;
+using TrafficNow.Repository.Interface.Notification;
+using System.Collections.Generic;
+using System.Threading;
+using Newtonsoft.Json;
+
+namespace TrafficNow.Service.Implementation
+{
+    public class NotificationService : INotificationService
+    {
+        private readonly PushBroker push;
+        private Utility _utility;
+        private INotificationRepository _notificationRepository;
+        private IDeviceService _deviceService;
+        public NotificationService(INotificationRepository notificationRepository, IDeviceService deviceService)
+        {
+            push = new PushBroker();
+            _utility = new Utility();
+            _notificationRepository = notificationRepository;
+            _deviceService = deviceService;
+            Initialize();
+        }
+        private void Initialize()
+        {
+            push.OnNotificationSent += NotificationSent;
+            push.OnChannelException += ChannelException;
+            push.OnServiceException += ServiceException;
+            push.OnNotificationFailed += NotificationFailed;
+            push.OnDeviceSubscriptionExpired += DeviceSubscriptionExpired;
+            push.OnDeviceSubscriptionChanged += DeviceSubscriptionChanged;
+            push.OnChannelCreated += ChannelCreated;
+            push.OnChannelDestroyed += ChannelDestroyed;
+        }
+        public void SendNotification(List<string> devices, string payload)
+        {
+            push.RegisterGcmService(new GcmPushChannelSettings(ServiceSettings.Default.GCM_KEY));
+            foreach (var device in devices)
+            {
+                push.QueueNotification(new GcmNotification().ForDeviceRegistrationId(device)
+                                  .WithJson(payload));
+                Thread.Sleep(1000);
+            }
+            push.StopAllServices();
+        }
+        static void DeviceSubscriptionChanged(object sender, string oldSubscriptionId, string newSubscriptionId, INotification notification)
+        {
+            //Currently this event will only ever happen for Android GCM
+            Console.WriteLine("Device Registration Changed:  Old-> " + oldSubscriptionId + "  New-> " + newSubscriptionId + " -> " + notification);
+        }
+
+        static void NotificationSent(object sender, INotification notification)
+        {
+            Console.WriteLine("Sent: " + sender + " -> " + notification);
+        }
+
+        static void NotificationFailed(object sender, INotification notification, Exception notificationFailureException)
+        {
+            Console.WriteLine("Failure: " + sender + " -> " + notificationFailureException.Message + " -> " + notification);
+        }
+
+        static void ChannelException(object sender, IPushChannel channel, Exception exception)
+        {
+            Console.WriteLine("Channel Exception: " + sender + " -> " + exception);
+        }
+
+        static void ServiceException(object sender, Exception exception)
+        {
+            Console.WriteLine("Channel Exception: " + sender + " -> " + exception);
+        }
+
+        static void DeviceSubscriptionExpired(object sender, string expiredDeviceSubscriptionId, DateTime timestamp, INotification notification)
+        {
+            Console.WriteLine("Device Subscription Expired: " + sender + " -> " + expiredDeviceSubscriptionId);
+        }
+
+        static void ChannelDestroyed(object sender)
+        {
+            Console.WriteLine("Channel Destroyed for: " + sender);
+        }
+
+        static void ChannelCreated(object sender, IPushChannel pushChannel)
+        {
+            Console.WriteLine("Channel Created for: " + sender);
+        }
+        private Model.NotificationModel.Notification PrepareNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type)
+        {
+            try
+            {
+                var notification = new Model.NotificationModel.Notification();
+                notification.type = type;
+                notification.text = payload;
+                notification.time = _utility.GetTimeInMilliseconds();
+                notification.participantUserId = from.userId;
+                notification.participantUserName = from.userName;
+                notification.participentAvatar = from.photo;
+                notification.receipentUserId = to.userId;
+                notification.receipentUserName = to.userName;
+                notification.receipentAvatar = to.photo;
+                return notification;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> AddNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type)
+        {
+            try
+            {
+                var notification = PrepareNotification(from, to, payload, type);
+                await _notificationRepository.AddNotification(notification);
+                var devices = await _deviceService.GetDiviceIds(to.userId);
+                var payloadToSend = JsonConvert.SerializeObject(notification);
+                SendNotification(devices, payloadToSend);
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+    }
+}

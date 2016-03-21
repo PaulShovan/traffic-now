@@ -1,22 +1,18 @@
 ﻿using Microsoft.Owin.Security.DataHandler.Encoder;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens;
-using System.Linq;
 using System.Security.Claims;
-using System.Web;
 using System.Web.Configuration;
 using Thinktecture.IdentityModel.Tokens;
-using TrafficNow.Core.JsonWebToken;
-using TrafficNow.Core.User.Dto;
-using TrafficNow.Core.User.ViewModel;
+using TrafficNow.Model.User.DbModels;
 
 namespace TrafficNow.Api.Helpers
 {
     public class TokenGenerator
     {
-        public JwtModel GenerateUserToken(UserViewModel user)
+        private const int VALIDITY = 14; 
+        public string GenerateUserToken(UserBasicInformation user)
         {
             string jwtToken = "";
             string issuer = "";
@@ -41,7 +37,7 @@ namespace TrafficNow.Api.Helpers
                 identity.AddClaim(new Claim(ClaimTypes.Role, "User"));
 
                 var now = DateTime.UtcNow;
-                var expires = now.AddDays(14);
+                var expires = now.AddDays(VALIDITY);
                 string symmetricKeyAsBase64 = key;
 
                 var keyByteArray = TextEncodings.Base64Url.Decode(symmetricKeyAsBase64);
@@ -52,24 +48,36 @@ namespace TrafficNow.Api.Helpers
                 var handler = new JwtSecurityTokenHandler();
                 jwtToken = handler.WriteToken(token);
 
-                return new JwtModel {
-                    token = jwtToken
-                };
+                return jwtToken;
             }
             catch (Exception e)
             {
                 throw;
             }
         }
-        public UserBasicModel GetUserFromToken(string token)
+        public UserBasicInformation GetUserFromToken(string token)
         {
-            UserBasicModel user = new UserBasicModel();
+            UserBasicInformation user = new UserBasicInformation();
             try
             {
                 var tokenOnly = token.Replace("Bearer", "").Trim();
                 var jwtDecoded = JWT.JsonWebToken.Decode(tokenOnly, TextEncodings.Base64Url.Decode(WebConfigurationManager.AppSettings["secret"]));
-                user = JsonConvert.DeserializeObject<UserBasicModel>(jwtDecoded);
+                user = JsonConvert.DeserializeObject<UserBasicInformation>(jwtDecoded);
                 return user;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public long GetTokenValidity()
+        {
+            try
+            {
+                var date = new DateTime();
+                date = DateTime.Now.AddDays(VALIDITY);
+                var time = date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                return (long)time;
             }
             catch (Exception)
             {

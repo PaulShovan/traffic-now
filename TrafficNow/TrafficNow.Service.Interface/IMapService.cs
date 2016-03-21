@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TrafficNow.Core.Map;
-using TrafficNow.Core.Shout.DataModel;
+using TrafficNow.Model.Map;
 
 namespace TrafficNow.Service.Interface
 {

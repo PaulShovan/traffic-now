@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TrafficNow.Core.Shout.DataModel;
-using TrafficNow.Core.Shout.ViewModel;
-using TrafficNow.Core.User.Dto;
+using TrafficNow.Model.Shout.DbModels;
+using TrafficNow.Model.Shout.ViewModels;
+using TrafficNow.Model.User.DbModels;
 
 namespace TrafficNow.Service.Interface
 {
     public interface IShoutService
     {
-        Task<ShoutViewModel> AddShout(ShoutModel shout);
+        Task<ShoutViewModel> AddShout(Shout shout);
         Task<List<ShoutViewModel>> GetFollowersShouts(int? offset, int? count, string userId);
-        Task<CommentViewModel> AddShoutComment(string shoutId, CommentModel comment);
-        Task<bool> AddOrRemoveLike(string shoutId, LikerModel like);
-        bool ValidateShout(ShoutModel shout);
+        Task<Comment> AddShoutComment(string shoutId, Comment comment);
+        Task<bool> AddOrRemoveLike(string shoutId, UserBasicInformation like);
+        bool ValidateShout(Shout shout);
     }
 }

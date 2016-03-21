@@ -4,33 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Core.Helpers;
-using TrafficNow.Core.User.Dto;
-using TrafficNow.Core.User.ViewModel;
+using TrafficNow.Model.User.DbModels;
+using TrafficNow.Model.User.ViewModels;
 using TrafficNow.Repository.Interface.Base;
 
 namespace TrafficNow.Repository.Interface.User
 {
-    public interface IUserRepository : IRepository<UserModel>
+    public interface IUserRepository : IRepository<Model.User.DbModels.User>
     {
-        Task<UserViewModel> AddOrUpdateUser(UserModel user);
-        Task<UserViewModel> GetUserById(string userId, string requesterUserId);
+        //Task<UserViewModel> AddOrUpdateUser(Model.User.DbModels.User user);
+        Task<UserViewModel> GetUserById(string userId);
+        Task<List<UserViewModel>> GetLeaders(List<string> userIds);
         Task<bool> IsEmailTaken(string email);
         Task<bool> IsUserNameTaken(string userName);
-        Task<bool> RegisterUser(UserModel user);
-        Task<UserBasicModel> LoginUsingEmail(string email, string password);
-        Task<UserBasicModel> LoginUsingUserName(string userName, string password);
-        Task<UserViewModel> UpdateUserInfo(UserInfoModel user, List<PairModel> updatedFields);
+        Task<bool> RegisterUser(Model.User.DbModels.User user);
+        Task<UserBasicInformation> LoginUsingEmail(string email, string password);
+        Task<UserBasicInformation> GetUserUsingEmail(string email);
+        Task<UserBasicInformation> LoginUsingUserName(string userName, string password);
+        Task<UserViewModel> UpdateUserInfo(UserInformation user, List<PairModel> updatedFields);
         #region follow
-        Task<bool> UpdateUserPoint(string userId, int pointToAdd);
-        Task<bool> AddFollower(string userId, FollowModel user);
-        Task<bool> AddFollowee(string userId, FollowModel user);
-        Task<bool> IsAlreadyFollower(string userId, FollowModel user);
-        Task<bool> RemoveFollower(string userId, FollowModel user);
-        Task<bool> RemoveFollowee(string userId, FollowModel user);
-        Task<List<FollowModel>> GetFollowees(string userId, int offset, int count);
-        Task<List<FollowModel>> GetFollowers(string userId, int offset, int count);
-        Task<List<FollowModel>> GetFollowers(string userId);
-        Task<List<FollowModel>> GetFollowees(string userId);
+        Task<bool> UpdateFollowingCount(string userId, int count);
+        Task<bool> UpdateFollowerCount(string userId, int count);
+        Task<List<UserBasicInformation>> GetLeaderBoard(string userId);
         #endregion
     }
 }

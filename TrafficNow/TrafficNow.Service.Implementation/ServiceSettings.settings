@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TrafficNow.Service.Implementation" GeneratedClassName="ServiceSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SMTP_USERNAME" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AKIAI5B74QQSXUSBNH3A</Value>
+    </Setting>
+    <Setting Name="SMTP_PASSWORD" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Aoj+tOrMytJU2QYkKS/51Syq/nefeBXgcZ8BmE/9mfnf</Value>
+    </Setting>
+    <Setting Name="SMTP_HOST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">email-smtp.us-west-2.amazonaws.com</Value>
+    </Setting>
+    <Setting Name="SMTP_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="GCM_KEY" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AIzaSyB9WCL0T_yJKerl-SDkzu8C2HlG4K_gY98</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

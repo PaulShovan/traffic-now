@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TrafficNow.Core.Shout.DataModel;
-using TrafficNow.Core.Shout.ViewModel;
+using TrafficNow.Core.Helpers;
+using TrafficNow.Model.Constants;
+using TrafficNow.Model.Shout.DbModels;
+using TrafficNow.Model.Shout.ViewModels;
+using TrafficNow.Model.User.DbModels;
+using TrafficNow.Repository.Interface.Point;
 using TrafficNow.Repository.Interface.Shout;
 using TrafficNow.Repository.Interface.User;
+using TrafficNow.Repository.Interface.UserConnections;
 using TrafficNow.Service.Interface;
 
 namespace TrafficNow.Service.Implementation
@@ -15,6 +20,12 @@ namespace TrafficNow.Service.Implementation
     {
         private IShoutRepository _shoutRepository;
         private IUserRepository _userRepository;
+        private IPointService _pointService;
+        private IPointRepository _pointRepository;
+        private IFollowerRepository _followerRepository;
+        private INotificationService _notificationService;
+        private Utility _utility;
+        private const string baseUrl = "www.digbuzzi.com/sharedLink?";
         private bool IsValidTrafficCondition(string condition)
         {
             string[] conditions = new string[] { "High", "Medium", "Low" };
@@ -24,7 +35,7 @@ namespace TrafficNow.Service.Implementation
             }
             return (Array.IndexOf(conditions, condition) > -1);
         }
-        public bool ValidateShout(ShoutModel shout)
+        public bool ValidateShout(Shout shout)
         {
             if (String.IsNullOrWhiteSpace(shout.userName)
                 || String.IsNullOrWhiteSpace(shout.shoutId)
@@ -37,22 +48,89 @@ namespace TrafficNow.Service.Implementation
             }
             return true;
         }
-        public ShoutService(IShoutRepository shoutRepository, IUserRepository userRepository)
+        public ShoutService(IShoutRepository shoutRepository, IUserRepository userRepository, 
+            IPointService pointService, IPointRepository pointRepository, IFollowerRepository followerRepository, 
+            INotificationService notificationService)
         {
             _shoutRepository = shoutRepository;
             _userRepository = userRepository;
+            _pointService = pointService;
+            _pointRepository = pointRepository;
+            _followerRepository = followerRepository;
+            _notificationService = notificationService;
+            _utility = new Utility();
         }
-        public async Task<ShoutViewModel> AddShout(ShoutModel shout)
+        private string GenerateSharableLink(Shout shout)
+        {
+            try
+            {
+                var sharableLink = "";
+                var builder = new StringBuilder();
+                builder
+                    .Append("photo=")
+                    .Append(shout.photo)
+                    .Append("&")
+                    .Append("userName=")
+                    .Append(shout.userName)
+                    .Append("&")
+                    .Append("shoutText=")
+                    .Append(shout.shoutText)
+                    .Append("&")
+                    .Append("likeCount=")
+                    .Append(shout.likeCount)
+                    .Append("&")
+                    .Append("commentCount=")
+                    .Append(shout.commentCount)
+                    .Append("&")
+                    .Append("shareCount=")
+                    .Append(shout.shareCount)
+                    .Append("&")
+                    .Append("trafficCondition=")
+                    .Append(shout.trafficCondition)
+                    .Append("&")
+                    .Append("place=")
+                    .Append(shout.location.place)
+                    .Append("&")
+                    .Append("city=")
+                    .Append(shout.location.city)
+                    .Append("&")
+                    .Append("country=")
+                    .Append(shout.location.country)
+                    .Append("&")
+                    .Append("latitude=")
+                    .Append(shout.location.latitude)
+                    .Append("&")
+                    .Append("longitude=")
+                    .Append(shout.location.longitude);
+                if(shout.attachments.Count > 0)
+                {
+                    builder.Append("&")
+                    .Append("attachments=")
+                    .Append(shout.attachments[0]);
+                }
+                sharableLink = Uri.EscapeUriString(builder.ToString());
+                sharableLink = baseUrl + sharableLink;
+                return sharableLink;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<ShoutViewModel> AddShout(Shout shout)
         {
             try
             {
                 if (ValidateShout(shout))
                 {
+                    shout.time = _utility.GetTimeInMilliseconds();
                     shout.shoutId = Guid.NewGuid().ToString();
                     shout.loc.coordinates[0] = shout.location.longitude;
                     shout.loc.coordinates[1] = shout.location.latitude;
+                    shout.sharableLink = GenerateSharableLink(shout);
                     var addedShout = await _shoutRepository.AddShout(shout);
-                    var pointUpdated = await _userRepository.UpdateUserPoint(shout.userId, 2);
+                    var pointUpdated = await _pointRepository.AddPoint(shout.userId,2, new PointDescription(2, "Posted a new buzz"));
                     if (pointUpdated)
                     {
                         return addedShout;
@@ -66,13 +144,27 @@ namespace TrafficNow.Service.Implementation
             }
 
         }
-        public async Task<CommentViewModel> AddShoutComment(string shoutId, CommentModel comment)
+        public async Task<Comment> AddShoutComment(string shoutId, Comment comment)
         {
             try
             {
+                comment.time = _utility.GetTimeInMilliseconds();
                 comment.commentId = Guid.NewGuid().ToString();
                 var commentRes = await _shoutRepository.AddShoutComment(shoutId, comment);
-                return commentRes;
+                var notificationText = Constants.NEWFOLLOWINGMSG;
+                notificationText = notificationText.Replace("__NAME__", comment.commentor.userName);
+                var from = comment.commentor;
+                var to = new UserBasicInformation
+                {
+                    userName = commentRes.userName,
+                    userId = commentRes.userId,
+                    photo = commentRes.photo,
+                    name = commentRes.name,
+                    email = commentRes.email,
+                    time = commentRes.time
+                };
+                var notificationAck = _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS);
+                return comment;
             }
             catch (Exception)
             {
@@ -81,10 +173,11 @@ namespace TrafficNow.Service.Implementation
             }
         }
 
-        public async Task<bool> AddOrRemoveLike(string shoutId, LikerModel like)
+        public async Task<bool> AddOrRemoveLike(string shoutId, UserBasicInformation like)
         {
             try
             {
+                like.time = _utility.GetTimeInMilliseconds();
                 bool result = false;
                 var ack = await _shoutRepository.IsAlreadyLiked(shoutId, like);
                 if (ack)
@@ -106,7 +199,7 @@ namespace TrafficNow.Service.Implementation
         {
             try
             {
-                var followers = await _userRepository.GetFollowees(userId);
+                var followers = await _followerRepository.GetFollowers(userId, 0, int.MaxValue);
                 List<string> followersId = new List<string>();
                 foreach (var item in followers)
                 {

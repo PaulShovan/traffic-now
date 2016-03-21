@@ -11,9 +11,12 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Api.Models;
-using TrafficNow.Core.User.Dto;
-using TrafficNow.Core.User.ViewModel;
+using TrafficNow.Api.Response;
+using TrafficNow.Model.User.DbModels;
+using TrafficNow.Model.User.ViewModels;
+using TrafficNow.Repository.Interface.Notification;
 using TrafficNow.Repository.Interface.User;
+using TrafficNow.Repository.Interface.UserConnections;
 using TrafficNow.Service.Interface;
 
 namespace TrafficNow.Api.Controllers
@@ -22,82 +25,89 @@ namespace TrafficNow.Api.Controllers
     public class UserController : ApiController
     {
         private IUserService _userService;
+        private INotificationRepository _notificationRepository;
         private IUserRepository _userRepository;
+        private IFollowerRepository _followerRepository;
+        private IFollowingRepository _followingRepository;
         private TokenGenerator _tokenGenerator = new TokenGenerator();
         private PasswordHasher _passwordHasher = null;
         private StorageService _storageService = null;
         string s3Prefix = ConfigurationManager.AppSettings["S3Prefix"];
-        public UserController(IUserService userService, IUserRepository userRepository)
+        public UserController(IUserService userService, IUserRepository userRepository, 
+            IFollowerRepository followerRepository, IFollowingRepository followingRepository, INotificationRepository notificationRepository)
         {
             _userService = userService;
+            _notificationRepository = notificationRepository;
             _userRepository = userRepository;
+            _followerRepository = followerRepository;
+            _followingRepository = followingRepository;
             _passwordHasher = new PasswordHasher();
             _storageService = new StorageService();
         }
-        private async Task<UserModel> VerifyFacebookAccessToken(string accessToken)
-        {
-            var verifyTokenEndPoint = "";
-            verifyTokenEndPoint = string.Format("https://graph.facebook.com/me?fields=id,email,name,picture&access_token={0}", accessToken);
-            var client = new HttpClient();
-            var uri = new Uri(verifyTokenEndPoint);
-            var response = await client.GetAsync(uri);
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                dynamic jObj = Newtonsoft.Json.JsonConvert.DeserializeObject(content);
-                var user = new UserModel
-                {
-                    facebookId = jObj.id,
-                    name = jObj.name,
-                    photo = jObj.picture.data.url,
-                    userId = Guid.NewGuid().ToString(),
-                    userName = Guid.NewGuid().ToString("N")
-                };
-                return user;
-            }
-            return new UserModel();
-        }
-        [VersionedRoute("user/register/facebook", "aunthazel", "v1")]
-        [HttpPost]
-        public async Task<IHttpActionResult> RegisterUser(TokenModel tokenmodel)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(tokenmodel.Token))
-                {
-                    return BadRequest("Invalid OAuth access token");
-                }
-                var fbUser = await VerifyFacebookAccessToken(tokenmodel.Token);
-                if (string.IsNullOrWhiteSpace(fbUser.facebookId))
-                {
-                    return BadRequest("Invalid Facebook User");
-                }
-                fbUser.points = 2;
-                var photoUrl = fbUser.userId + "/profile/" + "profile_pic.png";
-                var defaultPath = fbUser.photo;
-                fbUser.photo = s3Prefix + photoUrl;
-                var result = await _userRepository.AddOrUpdateUser(fbUser);
-                WebRequest req = WebRequest.Create(defaultPath);
-                WebResponse response = req.GetResponse();
-                using (var stream1 = response.GetResponseStream())
-                using (var stream2 = new MemoryStream())
-                {
-                    stream1.CopyTo(stream2);
-                    _storageService.UploadFile("trafficnow", photoUrl, stream2);
-                }
-                var jwt = _tokenGenerator.GenerateUserToken(result);
-                return Ok(jwt);
+        //private async Task<UserModel> VerifyFacebookAccessToken(string accessToken)
+        //{
+        //    var verifyTokenEndPoint = "";
+        //    verifyTokenEndPoint = string.Format("https://graph.facebook.com/me?fields=id,email,name,picture&access_token={0}", accessToken);
+        //    var client = new HttpClient();
+        //    var uri = new Uri(verifyTokenEndPoint);
+        //    var response = await client.GetAsync(uri);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var content = await response.Content.ReadAsStringAsync();
+        //        dynamic jObj = Newtonsoft.Json.JsonConvert.DeserializeObject(content);
+        //        var user = new UserModel
+        //        {
+        //            facebookId = jObj.id,
+        //            name = jObj.name,
+        //            photo = jObj.picture.data.url,
+        //            userId = Guid.NewGuid().ToString(),
+        //            userName = Guid.NewGuid().ToString("N")
+        //        };
+        //        return user;
+        //    }
+        //    return new UserModel();
+        //}
+        //[VersionedRoute("user/register/facebook", "aunthazel", "v1")]
+        //[HttpPost]
+        //public async Task<IHttpActionResult> RegisterUser(TokenModel tokenmodel)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(tokenmodel.Token))
+        //        {
+        //            return BadRequest("Invalid OAuth access token");
+        //        }
+        //        var fbUser = await VerifyFacebookAccessToken(tokenmodel.Token);
+        //        if (string.IsNullOrWhiteSpace(fbUser.facebookId))
+        //        {
+        //            return BadRequest("Invalid Facebook User");
+        //        }
+        //        fbUser.points = 2;
+        //        var photoUrl = fbUser.userId + "/profile/" + "profile_pic.png";
+        //        var defaultPath = fbUser.photo;
+        //        fbUser.photo = s3Prefix + photoUrl;
+        //        var result = await _userRepository.AddOrUpdateUser(fbUser);
+        //        WebRequest req = WebRequest.Create(defaultPath);
+        //        WebResponse response = req.GetResponse();
+        //        using (var stream1 = response.GetResponseStream())
+        //        using (var stream2 = new MemoryStream())
+        //        {
+        //            stream1.CopyTo(stream2);
+        //            _storageService.UploadFile("trafficnow", photoUrl, stream2);
+        //        }
+        //        var jwt = _tokenGenerator.GenerateUserToken(result);
+        //        return Ok(jwt);
 
-            }
-            catch (Exception e)
-            {
-                return InternalServerError();
-            }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return InternalServerError();
+        //    }
 
-        }
+        //}
         [VersionedRoute("user/register", "aunthazel", "v1")]
         [HttpPost]
-        public async Task<IHttpActionResult> RegisterUser(UserModel user)
+        public async Task<IHttpActionResult> RegisterUser(User user)
         {
             try
             {
@@ -116,11 +126,10 @@ namespace TrafficNow.Api.Controllers
                 var hashedPassword = _passwordHasher.GetHashedPassword(user.password);
                 user.password = hashedPassword;
                 user.userId = Guid.NewGuid().ToString();
-                user.points = 2;
                 user.showUserEmail = true;
-                var photoUrl = user.userId + "/profile/" + "profile_pic.png";
+                var photoUrl = user.userId + "/profile/" + "profile_pic.jpg";
                 user.photo = s3Prefix+photoUrl;
-                var res = await _userRepository.RegisterUser(user);
+                var res = await _userService.RegisterUser(user);
                 var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.jpg");
                 if (File.Exists(defaultPath))
                 {
@@ -128,7 +137,10 @@ namespace TrafficNow.Api.Controllers
                     _storageService.UploadFile("trafficnow", photoUrl, fileStream);
                 }
                 var jwt = _tokenGenerator.GenerateUserToken(user);
-                return Ok(jwt);
+                var validity = _tokenGenerator.GetTokenValidity();
+                var loginRes = new LoginResponse(user.userId, jwt, validity);
+                //var response = new GenericResponse<LoginResponse>(loginRes);
+                return Json(loginRes);
 
             }
             catch (Exception e)
@@ -143,7 +155,7 @@ namespace TrafficNow.Api.Controllers
             try
             {
                 string token = "";
-                var userInfo = new UserInfoModel();
+                var userInfo = new UserInformation();
                 if (!Request.Content.IsMimeMultipartContent("form-data"))
                 {
                     return BadRequest("Unsupported media type");
@@ -222,8 +234,7 @@ namespace TrafficNow.Api.Controllers
                 }
                 var updatedUser = await _userService.UpdateUserInfo(userInfo, user);
                 var jwt = _tokenGenerator.GenerateUserToken(updatedUser);
-                var response = new UpdatedUserResponse { profile = updatedUser, updatedToken = jwt};
-                return Ok(response);
+                return Ok(new UpdatedUserResponse { profile = updatedUser, updatedToken = jwt });
             }
             catch (Exception e)
             {
@@ -249,16 +260,10 @@ namespace TrafficNow.Api.Controllers
                 }
                 else
                 {
-                    var userModel = new UserViewModel
-                    {
-                        userId = loggedInUser.userId,
-                        name = loggedInUser.name,
-                        userName = loggedInUser.userName,
-                        photo = loggedInUser.photo,
-                        email = loggedInUser.email
-                    };
-                    var jwt = _tokenGenerator.GenerateUserToken(userModel);
-                    return Ok(jwt);
+                    var jwt = _tokenGenerator.GenerateUserToken(loggedInUser);
+                    var validity = _tokenGenerator.GetTokenValidity();
+                    var loginRes = new LoginResponse(loggedInUser.userId, jwt, validity);
+                    return Ok(loginRes);
                 }
             }
             catch (Exception e)
@@ -289,14 +294,10 @@ namespace TrafficNow.Api.Controllers
                 {
                     userId = requesterUserId;
                 }
-                var result = await _userRepository.GetUserById(userId, requesterUserId);
-                if(userId == requesterUserId)
+                var result = await _userService.GetUserById(userId, requesterUserId);
+                if(result == null)
                 {
-                    result.isOwnProfile = true;
-                }
-                else
-                {
-                    result.isOwnProfile = false;
+                    return NotFound();
                 }
                 return Ok(result);
 
@@ -309,7 +310,7 @@ namespace TrafficNow.Api.Controllers
         [VersionedRoute("user/follow", "aunthazel", "v1")]
         [VersionedRoute("user/unfollow", "aunthazel", "v1")]
         [HttpPost]
-        public async Task<IHttpActionResult> FollowUser(FollowModel userToFollow)
+        public async Task<IHttpActionResult> FollowUser(UserBasicInformation userToFollow)
         {
             try
             {
@@ -323,37 +324,15 @@ namespace TrafficNow.Api.Controllers
                 {
                     token = values.FirstOrDefault();
                 }
-                var userBasic = _tokenGenerator.GetUserFromToken(token);
-                var user = new FollowModel
-                {
-                    userId = userBasic.userId,
-                    userName = userBasic.userName,
-                    photo = userBasic.photo,
-                    time = userToFollow.time
-                };
+                var user = _tokenGenerator.GetUserFromToken(token);
                 if (string.IsNullOrEmpty(user.userId))
                 {
                     return BadRequest("Invalid User");
                 }
-                if (await _userRepository.IsAlreadyFollower(userToFollow.userId, user))
+                var followDone = await _userService.FollowUser(user, userToFollow);
+                if (followDone)
                 {
-                    bool followerDone = await _userRepository.RemoveFollower(userToFollow.userId, user);
-                    bool followeeDone = await _userRepository.RemoveFollowee(user.userId, userToFollow);
-                    if (followerDone && followeeDone)
-                    {
-                        var message = new ResponseModel { message = "Unfollowed successfully" };
-                        return Ok(message);
-                    }
-                }
-                else
-                {
-                    bool followerDone = await _userRepository.AddFollower(userToFollow.userId, user);
-                    bool followeeDone = await _userRepository.AddFollowee(user.userId, userToFollow);
-                    if(followerDone && followeeDone)
-                    {
-                        var message = new ResponseModel { message = "Followed successfully" };
-                        return Ok(message);
-                    }
+                    return Ok();
                 }
                 return BadRequest();
             }
@@ -383,7 +362,8 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var followers = await _userRepository.GetFollowers(userId, offset, count);
+                var followers = await _followerRepository.GetFollowers(userId, offset, count);
+                //var response = new GenericResponse<List<UserBasicInformation>>(followers);
                 return Ok(followers);
 
             }
@@ -394,7 +374,7 @@ namespace TrafficNow.Api.Controllers
         }
         [Authorize]
         [VersionedRoute("user/followees", "aunthazel", "v1")]
-        public async Task<IHttpActionResult> GetFollowees(string userId = "", int offset=0, int count=10)
+        public async Task<IHttpActionResult> GetFollowings(string userId = "", int offset=0, int count=10)
         {
             try
             {
@@ -413,8 +393,9 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var followees = await _userRepository.GetFollowees(userId, offset, count);
-                return Ok(followees);
+                var followings = await _followingRepository.GetFollowings(userId, offset, count);
+                //var response = new GenericResponse<List<UserBasicInformation>>(followings);
+                return Ok(followings);
 
             }
             catch (Exception e)
@@ -424,59 +405,113 @@ namespace TrafficNow.Api.Controllers
         }
 
         [VersionedRoute("user/renewpassword", "aunthazel", "v1")]
-        public IHttpActionResult GetNewPassword(string userEmail)
+        public async Task<IHttpActionResult> GetNewPassword(string userEmail)
         {
-            //try
-            //{
-            //    if (string.IsNullOrWhiteSpace(userEmail))
-            //    {
-            //        return BadRequest("Invalid Email Address");
-            //    }
-            //    if (await _userService.IsEmailTaken(userEmail))
-            //    {
-            //        MailMessage mailMessage = new MailMessage();
-            //        mailMessage.From = new MailAddress("gypsy.shovan@gmail.com");
-            //        mailMessage.To.Add(new MailAddress("shovan066@gmail.com"));
-            //        mailMessage.Subject = "Email Checking Asynchronously";
-            //        mailMessage.Body = "Email test asynchronous";
-            //        mailMessage.IsBodyHtml = true;//to send mail in html or not
-
-            //        SmtpClient smtpClient = new SmtpClient("smtp.live.com", 587);//portno here
-            //        //smtpClient.Host = "smtp.gmail.com";
-            //        smtpClient.EnableSsl = false; //True or False depends on SSL Require or not
-            //        smtpClient.Credentials = new NetworkCredential("gypsy.shovan@gmail.com", "gypsyCoder066");
-            //        //smtpClient.UseDefaultCredentials = true; //true or false depends on you want to default credentials or not
-            //        Object mailState = mailMessage;
-
-            //        smtpClient.SendCompleted += new SendCompletedEventHandler(smtpClient_SendCompleted);
-            //        try
-            //        {
-            //            smtpClient.SendAsync(mailMessage, mailState);
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return Ok(new ResponseModel {message="Email Has Been Sent"});
-            //}
-            //catch (Exception e)
-            //{
-            //    return InternalServerError(e);
-            //}
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userEmail))
+                {
+                    return BadRequest("Invalid Email Address");
+                }
+                if (await _userRepository.IsEmailTaken(userEmail))
+                {
+                    var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/App_Data/Templates/forgot-pass.html");
+                    var res = await _userService.GetNewPassword(userEmail, defaultPath);
+                }
+                return Ok(new ResponseModel { message = "Email Has Been Sent" });
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
             return Ok(new ResponseModel { message = "Email Has Been Sent" });
         }
-        private void smtpClient_SendCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        
+        [Authorize]
+        [VersionedRoute("user/leaderboard", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetLeaderBoard()
         {
-            MailMessage mailMessage = e.UserState as MailMessage;
-            if (e.Cancelled || e.Error != null)
+            try
             {
+                string token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrWhiteSpace(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
 
-                
+                var leaderBoard = await _userService.GetLeaderBoard(user.userId);
+                if(leaderBoard == null)
+                {
+                    return BadRequest();
+                }
+                return Ok(leaderBoard);
+
             }
-            else
+            catch (Exception e)
             {
-                //return.Write("Email sent successfully");
+                return InternalServerError();
+            }
+        }
+        [Authorize]
+        [VersionedRoute("user/leaders/get", "aunthazel", "v1")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetAllLeaders(int offset = 0, int count = 10)
+        {
+            try
+            {
+                string token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrWhiteSpace(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                var leaderBoard = await _userService.GetAllLeaders(user.userId, offset, count);
+                return Ok(leaderBoard);
+
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [VersionedRoute("user/getnotification", "aunthazel", "v1")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetNotification()
+        {
+            try
+            {
+                string token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrWhiteSpace(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                if(user == null)
+                {
+                    return BadRequest();
+                }
+                var notifications = await _notificationRepository.GetNotification(user.userId);
+                return Ok(notifications);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
             }
         }
     }

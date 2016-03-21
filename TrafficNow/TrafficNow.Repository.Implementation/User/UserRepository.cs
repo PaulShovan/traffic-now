@@ -1,45 +1,59 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Core.Helpers;
-using TrafficNow.Core.User.Dto;
-using TrafficNow.Core.User.ViewModel;
+using TrafficNow.Model.User.DbModels;
+using TrafficNow.Model.User.ViewModels;
 using TrafficNow.Repository.Implementation.Base;
 using TrafficNow.Repository.Interface.User;
 
 namespace TrafficNow.Repository.Implementation.User
 {
-    public class UserRepository : Repository<UserModel>, IUserRepository
+    public class UserRepository : Repository<Model.User.DbModels.User>, IUserRepository
     {
-        public async Task<UserViewModel> AddOrUpdateUser(UserModel user)
+        //public async Task<UserViewModel> AddOrUpdateUser(UserModel user)
+        //{
+        //    try
+        //    {
+        //        var filter = Builders<UserModel>.Filter.Eq(s => s.facebookId, user.facebookId);
+        //        var update = Builders<UserModel>.Update.Set(u => u.facebookId, user.facebookId)
+        //            .Set(u => u.name, user.name)
+        //            .Set(u => u.photo, user.photo)
+        //            .SetOnInsert("id", user.userId);
+        //        var options = new FindOneAndUpdateOptions<UserModel, UserModel>();
+        //        options.IsUpsert = true;
+        //        options.ReturnDocument = ReturnDocument.After;
+        //        var result = await Collection.FindOneAndUpdateAsync(filter, update, options);
+        //        return result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw;
+        //    }
+        //}
+        public async Task<UserViewModel> GetUserById(string userId)
         {
             try
             {
-                var filter = Builders<UserModel>.Filter.Eq(s => s.facebookId, user.facebookId);
-                var update = Builders<UserModel>.Update.Set(u => u.facebookId, user.facebookId)
-                    .Set(u => u.name, user.name)
-                    .Set(u => u.photo, user.photo)
-                    .SetOnInsert("id", user.userId);
-                var options = new FindOneAndUpdateOptions<UserModel, UserModel>();
-                options.IsUpsert = true;
-                options.ReturnDocument = ReturnDocument.After;
-                var result = await Collection.FindOneAndUpdateAsync(filter, update, options);
-                return result;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<UserViewModel> GetUserById(string userId, string requesterUserId)
-        {
-            try
-            {
-                var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude(u => u.facebookId);
-                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
+                //var builder = Builders<Model.User.DbModels.User>.Filter;
+                //var filter = builder.Eq(u => u.userId, userId);
+                ////var res = await Collection.Aggregate().Match(filter).Lookup<UserViewModel>("userId", u => u.userId, new BsonDocument{ });
+
+                //var query = from u in Collection.AsQueryable()
+                //            join p in PointCollection.AsQueryable() on u.userId equals p.userId into joined
+                //            select new { joined };
+                //var result = query.FirstOrDefault();
+//to do join with point collection
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id").Exclude(u => u.facebookId);
+                var result = await Collection.Find(u => u.userId == userId).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
+                if(result == null)
+                {
+                    return null;
+                }
                 var user = new UserViewModel
                 {
                     userId = result.userId,
@@ -47,29 +61,16 @@ namespace TrafficNow.Repository.Implementation.User
                     name = result.name,
                     photo = result.photo,
                     address = result.address,
-                    points = result.points,
                     mood = result.mood,
                     bio = result.bio,
                     emailVerified = result.emailVerified,
                     badges = result.badges,
-                    followeeCount = result.followeeCount,
+                    followingCount = result.followingCount,
                     followerCount = result.followerCount
                 };
                 if (result.showUserEmail)
                 {
                     user.email = result.email;
-                }
-                if(userId != requesterUserId)
-                {
-                    var isFollowing = await IsAlreadyFollower(user.userId, new FollowModel
-                    {
-                        userId = requesterUserId
-                    });
-                    user.isFollowing = isFollowing;
-                }
-                else
-                {
-                    user.isFollowing = false;
                 }
                 return user;
             }
@@ -113,19 +114,19 @@ namespace TrafficNow.Repository.Implementation.User
             }
         }
 
-        public async Task<UserBasicModel> LoginUsingEmail(string email, string password)
+        public async Task<UserBasicInformation> LoginUsingEmail(string email, string password)
         {
             try
             {
-                var builder = Builders<UserModel>.Filter;
+                var builder = Builders<Model.User.DbModels.User>.Filter;
                 var filter = builder.Eq(user => user.email, email) & builder.Eq(user => user.password, password);
-                var projection = Builders<UserModel>.Projection.Exclude("_id")
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id")
                     .Include(u => u.userId)
                     .Include(u => u.photo)
                     .Include(u => u.name)
                     .Include(u => u.userName)
                     .Include(u => u.email);
-                var result = await Collection.Find(filter).Project<UserModel>(projection).FirstOrDefaultAsync();
+                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
                 return result;
             }
             catch (Exception ex)
@@ -134,19 +135,19 @@ namespace TrafficNow.Repository.Implementation.User
             }
         }
 
-        public async Task<UserBasicModel> LoginUsingUserName(string userName, string password)
+        public async Task<UserBasicInformation> LoginUsingUserName(string userName, string password)
         {
             try
             {
-                var builder = Builders<UserModel>.Filter;
+                var builder = Builders<Model.User.DbModels.User>.Filter;
                 var filter = builder.Eq(user => user.userName, userName) & builder.Eq(user => user.password, password);
-                var projection = Builders<UserModel>.Projection.Exclude("_id")
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id")
                     .Include(u => u.userId)
                     .Include(u => u.photo)
                     .Include(u => u.name)
                     .Include(u => u.userName)
                     .Include(u => u.email);
-                var result = await Collection.Find(filter).Project<UserModel>(projection).FirstOrDefaultAsync();
+                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
                 return result;
             }
             catch (Exception ex)
@@ -155,7 +156,7 @@ namespace TrafficNow.Repository.Implementation.User
             }
         }
 
-        public async Task<bool> RegisterUser(UserModel user)
+        public async Task<bool> RegisterUser(Model.User.DbModels.User user)
         {
             try
             {
@@ -167,165 +168,21 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
-        public async Task<bool> UpdateUserPoint(string userId, int pointToAdd)
-        {
-            try
-            {
-                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
-                var update = Builders<UserModel>.Update.Inc(u => u.points, pointToAdd);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return result.IsAcknowledged;
-            }
-            catch (Exception e)
-            {
-                throw;
-
-            }
-        }
+       
         #region follow
-        public async Task<bool> AddFollowee(string userId, FollowModel user)
+        public async Task<UserViewModel> UpdateUserInfo(UserInformation user, List<PairModel> updatedFields)
         {
             try
             {
-                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
-                var update = Builders<UserModel>.Update.AddToSet(u => u.followees, user).Inc(u => u.followeeCount, 1);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-
-        public async Task<bool> AddFollower(string userId, FollowModel user)
-        {
-            try
-            {
-                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
-                var update = Builders<UserModel>.Update.AddToSet(u => u.followers, user).Inc(u => u.followerCount, 1);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<List<FollowModel>> GetFollowees(string userId, int offset, int count)
-        {
-            try
-            {
-                var projection = Builders<UserModel>.Projection.Include(u => u.followees).Slice(x => x.followees, offset, count).Exclude("_id");
-                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
-                return result.followees;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<List<FollowModel>> GetFollowees(string userId)
-        {
-            try
-            {
-                var projection = Builders<UserModel>.Projection.Include(x => x.followees).Exclude("_id");
-                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
-                return result.followees;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<List<FollowModel>> GetFollowers(string userId, int offset, int count)
-        {
-            try
-            {
-                var projection = Builders<UserModel>.Projection.Include(u => u.followers).Slice(x => x.followers, offset, count).Exclude("_id");
-                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
-                return result.followers;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<List<FollowModel>> GetFollowers(string userId)
-        {
-            try
-            {
-                var projection = Builders<UserModel>.Projection.Include(u => u.followers).Exclude("_id");
-                var result = await Collection.Find(u => u.userId == userId).Project<UserModel>(projection).FirstOrDefaultAsync();
-                return result.followers;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<bool> IsAlreadyFollower(string userId, FollowModel user)
-        {
-            try
-            {
-                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
-                var filter2 = Builders<UserModel>.Filter.ElemMatch(p => p.followers, f => f.userId == user.userId);
-                var filter3 = Builders<UserModel>.Filter.And(filter, filter2);
-                var count = await Collection.CountAsync(filter3);
-                if (count < 1)
-                {
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-        public async Task<bool> RemoveFollowee(string userId, FollowModel user)
-        {
-            try
-            {
-                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
-                var update = Builders<UserModel>.Update.PullFilter(p => p.followees, f => f.userId == user.userId).Inc(u => u.followeeCount, -1);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return result.IsAcknowledged;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-
-        public async Task<bool> RemoveFollower(string userId, FollowModel user)
-        {
-            try
-            {
-                var filter = Builders<UserModel>.Filter.Eq(u => u.userId, userId);
-                var update = Builders<UserModel>.Update.PullFilter(p => p.followers, f => f.userId == user.userId).Inc(u => u.followerCount, -1);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return result.IsAcknowledged;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
-
-        public async Task<UserViewModel> UpdateUserInfo(UserInfoModel user, List<PairModel> updatedFields)
-        {
-            try
-            {
-                var update = Builders<UserModel>.Update.Set("bio", user.bio);
+                var update = Builders<Model.User.DbModels.User>.Update.Set("bio", user.bio);
                 //var update = Builders<UserModel>.Update.Set(u=>u.photo, user.photo);
-                var filter = Builders<UserModel>.Filter.Eq(s => s.userId, user.userId);
-                var projection = Builders<UserModel>.Projection.Exclude("_id").Exclude(u => u.facebookId); ;
+                var filter = Builders<Model.User.DbModels.User>.Filter.Eq(s => s.userId, user.userId);
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id").Exclude(u => u.facebookId); ;
                 foreach (var field in updatedFields)
                 {
                     update = update.Set(field.key, field.value);
                 }
-                var options = new FindOneAndUpdateOptions<UserModel, UserModel>();
+                var options = new FindOneAndUpdateOptions<Model.User.DbModels.User, Model.User.DbModels.User>();
                 options.IsUpsert = false;
                 options.ReturnDocument = ReturnDocument.After;
                 options.Projection = projection;
@@ -337,12 +194,11 @@ namespace TrafficNow.Repository.Implementation.User
                     name = result.name,
                     photo = result.photo,
                     address = result.address,
-                    points = result.points,
                     mood = result.mood,
                     bio = result.bio,
                     emailVerified = result.emailVerified,
                     badges = result.badges,
-                    followeeCount = result.followeeCount,
+                    followingCount = result.followingCount,
                     followerCount = result.followerCount,
                     email = result.email,
                     isFollowing = false
@@ -354,6 +210,87 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
+        public async Task<bool> UpdateFollowingCount(string userId, int count)
+        {
+            try
+            {
+                var filter = Builders<Model.User.DbModels.User>.Filter.Eq(u => u.userId, userId);
+                var update = Builders<Model.User.DbModels.User>.Update.Inc(u => u.followingCount, count);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> UpdateFollowerCount(string userId, int count)
+        {
+            try
+            {
+                var filter = Builders<Model.User.DbModels.User>.Filter.Eq(u => u.userId, userId);
+                var update = Builders<Model.User.DbModels.User>.Update.Inc(u => u.followerCount, count);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public Task<List<UserBasicInformation>> GetLeaderBoard(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<UserViewModel>> GetLeaders(List<string> userIds)
+        {
+            try
+            {
+                List<UserViewModel> leaders = new List<UserViewModel>();
+                var filter = Builders<Model.User.DbModels.User>.Filter.In(s => s.userId, userIds);
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id");
+                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).ToListAsync();
+                result.ForEach(user => leaders.Add(
+                        new UserViewModel
+                        {
+                            name = user.name,
+                            userId = user.userId,
+                            userName = user.userName,
+                            photo = user.photo,
+                            email = user.email,
+                            time = user.time,
+                            followerCount = user.followerCount
+                        }
+                        ));
+                return leaders;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         #endregion follow
+        public async Task<UserBasicInformation> GetUserUsingEmail(string email)
+        {
+            try
+            {
+                var builder = Builders<Model.User.DbModels.User>.Filter;
+                var filter = builder.Eq(user => user.email, email);
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id")
+                    .Include(u => u.userId)
+                    .Include(u => u.photo)
+                    .Include(u => u.name)
+                    .Include(u => u.userName)
+                    .Include(u => u.email);
+                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

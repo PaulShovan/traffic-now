@@ -8,6 +8,6 @@ namespace TrafficNow.Service.Interface
 {
     public interface IMailService
     {
-        void SendMail(string fromAddress, string toAddress);
+        bool SendMail(string fromAddress, string toAddress,string subject, string body);
     }
 }

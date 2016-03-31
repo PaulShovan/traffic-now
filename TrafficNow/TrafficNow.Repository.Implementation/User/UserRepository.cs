@@ -292,5 +292,20 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
+
+        public async Task<bool> ResetPasswordUsingEmail(string email, string password)
+        {
+            try
+            {
+                var filter = Builders<Model.User.DbModels.User>.Filter.Eq(u => u.email, email);
+                var update = Builders<Model.User.DbModels.User>.Update.Set(u => u.password, password);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 }

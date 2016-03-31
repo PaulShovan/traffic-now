@@ -20,7 +20,7 @@ namespace TrafficNow.Repository.Interface.Shout
         Task<ShoutViewModel> GetShoutById(string shoutId);
         Task<List<Comment>> GetShoutComments(string shoutId, int skip, int limit);
         Task<Model.Shout.DbModels.Shout> AddShoutComment(string shoutId, Comment comment);
-        Task<bool> AddLike(string shoutId, UserBasicInformation like);
+        Task<Model.Shout.DbModels.Shout> AddLike(string shoutId, UserBasicInformation like);
         Task<bool> RemoveLike(string shoutId, UserBasicInformation like);
         Task<bool> IsAlreadyLiked(string shoutId, UserBasicInformation like);
         Task<List<UserBasicInformation>> GetLikes(string shoutId);

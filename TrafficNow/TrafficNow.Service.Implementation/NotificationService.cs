@@ -41,13 +41,18 @@ namespace TrafficNow.Service.Implementation
         }
         public void SendNotification(List<string> devices, string payload)
         {
-            push.RegisterGcmService(new GcmPushChannelSettings(ServiceSettings.Default.GCM_KEY));
-            foreach (var device in devices)
-            {
-                push.QueueNotification(new GcmNotification().ForDeviceRegistrationId(device)
-                                  .WithJson(payload));
-                Thread.Sleep(1000);
-            }
+            //devices.Add("eBmZB2WHebM:APA91bGVhFKs50c0cOQ-lmCH7tjwfrF_f8WkzOnYASne9SOn6P--jLTmwasUX2Y9LVdsGy9icDhVjrjCT1UuRg9E0po1LeBHhq1xvqCgIOJCXtsMgcegTz8xaK9jjbVYe4ICGLJhgJq8");
+            push.RegisterGcmService(new GcmPushChannelSettings("AIzaSyB9WCL0T_yJKerl-SDkzu8C2HlG4K_gY98"));
+            //push.QueueNotification(new GcmNotification().ForDeviceRegistrationId("eBmZB2WHebM:APA91bGVhFKs50c0cOQ-lmCH7tjwfrF_f8WkzOnYASne9SOn6P--jLTmwasUX2Y9LVdsGy9icDhVjrjCT1UuRg9E0po1LeBHhq1xvqCgIOJCXtsMgcegTz8xaK9jjbVYe4ICGLJhgJq8")
+            //                     .WithJson(payload));
+            //test: "fM-5H8nQ__M:APA91bFBhkkgeoKrsj6BhOVEzFIss-V_VMriGOZnU4yFyhtCW86kjJVMiVsuofCWuYVQ6rIfhoOit08yunyBO6_o_6x0A-2RydwEnljSWo64KYBClffsL-Cz52weAgP9MWO3-oGHzU45"
+            //push.RegisterGcmService(new GcmPushChannelSettings("AIzaSyB9WCL0T_yJKerl-SDkzu8C2HlG4K_gY98"));
+            //foreach (var device in devices)
+            //{
+            //    push.QueueNotification(new GcmNotification().ForDeviceRegistrationId(device).WithJson(payload));
+            //    Thread.Sleep(1000);
+            //}
+            push.QueueNotification(new GcmNotification().ForDeviceRegistrationId(devices).WithJson(payload));
             push.StopAllServices();
         }
         static void DeviceSubscriptionChanged(object sender, string oldSubscriptionId, string newSubscriptionId, INotification notification)
@@ -118,11 +123,15 @@ namespace TrafficNow.Service.Implementation
                 var notification = PrepareNotification(from, to, payload, type);
                 await _notificationRepository.AddNotification(notification);
                 var devices = await _deviceService.GetDiviceIds(to.userId);
+                //if(devices.Count < 1)
+                //{
+                //    return true;
+                //}
                 var payloadToSend = JsonConvert.SerializeObject(notification);
                 SendNotification(devices, payloadToSend);
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw;
             }

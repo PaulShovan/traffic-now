@@ -26,11 +26,12 @@ namespace TrafficNow.Service.Implementation
         private IFollowerRepository _followerRepository;
         private IFollowingRepository _followingRepository;
         private INotificationService _notificationService;
+        private IMailService _mailService;
         private Utility _utility;
         public UserService(IUserRepository userRepository, IPointService pointService, 
             IFollowerService followerService, IFollowingService followingService, 
             IFollowerRepository followerRepository, IFollowingRepository followingRepository, 
-            IPointRepository pointRepository, INotificationService notificationService)
+            IPointRepository pointRepository, INotificationService notificationService, IMailService mailService)
         {
             _userRepository = userRepository;
             _pointService = pointService;
@@ -40,6 +41,7 @@ namespace TrafficNow.Service.Implementation
             _followingRepository = followingRepository;
             _pointRepository = pointRepository;
             _notificationService = notificationService;
+            _mailService = mailService;
             _utility = new Utility();
         }
         public Task<UserViewModel> UpdateUserInfo(UserInformation user, UserBasicInformation userData)
@@ -85,7 +87,7 @@ namespace TrafficNow.Service.Implementation
             }
         }
 
-        public async Task<bool> RegisterUser(User user)
+        public async Task<bool> RegisterUser(User user, string mailTemplatePath)
         {
             try
             {
@@ -98,7 +100,13 @@ namespace TrafficNow.Service.Implementation
                 pointInserted = await _pointService.InserPoint(user.userId);
                 followingInserted = await _followingService.InsertFollowing(user.userId);
                 followerInserted = await _followerService.InsertFollower(user.userId);
-                return userInserted && pointInserted && followingInserted && followerInserted;
+                if (userInserted && pointInserted && followingInserted && followerInserted)
+                {
+                    var html = File.ReadAllText(mailTemplatePath);
+                    html = html.Replace("__NAME__", user.userName);
+                    var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Welcome to digbuzzi", html);
+                };
+                return true;
             }
             catch (Exception)
             {
@@ -297,7 +305,15 @@ namespace TrafficNow.Service.Implementation
                 {
                     return false;
                 }
+                string pass = _utility.RandomString(12);
+                var updated = await _userRepository.ResetPasswordUsingEmail(user.email, pass);
+                if (!updated)
+                {
+                    return false;
+                }
                 var html = File.ReadAllText(bodyPath);
+                html = html.Replace("__NAME__", user.userName);
+                var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Digbuzzi-Forget Password", html);
                 return true;
             }
             catch (Exception)

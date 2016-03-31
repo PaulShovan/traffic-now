@@ -10,6 +10,6 @@ namespace TrafficNow.Repository.Interface.Notification
     public interface INotificationRepository : IRepository<Model.NotificationModel.Notification>
     {
         Task<bool> AddNotification(Model.NotificationModel.Notification notification);
-        Task<List<Model.NotificationModel.Notification>> GetNotification(string userId);
+        Task<List<Model.NotificationModel.Notification>> GetNotification(string userId, int skip, int limit);
     }
 }

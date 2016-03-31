@@ -25,12 +25,12 @@ namespace TrafficNow.Repository.Implementation.Notification
             }
         }
 
-        public async Task<List<Model.NotificationModel.Notification>> GetNotification(string userId)
+        public async Task<List<Model.NotificationModel.Notification>> GetNotification(string userId, int skip = 0, int limit = 10)
         {
             try
             {
                 var projection = Builders<Model.NotificationModel.Notification>.Projection.Exclude("_id");
-                var result = await Collection.Find(n => n.receipentUserId == userId).Project<Model.NotificationModel.Notification>(projection).ToListAsync();
+                var result = await Collection.Find(n => n.receipentUserId == userId).Project<Model.NotificationModel.Notification>(projection).Skip(skip).Limit(limit).ToListAsync();
                 return result;
             }
             catch (Exception e)

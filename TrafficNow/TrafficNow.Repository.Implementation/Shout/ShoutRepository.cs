@@ -15,14 +15,18 @@ namespace TrafficNow.Repository.Implementation.Shout
     public class ShoutRepository : Repository<Model.Shout.DbModels.Shout>, IShoutRepository
     {
 
-        public async Task<bool> AddLike(string shoutId, UserBasicInformation like)
+        public async Task<Model.Shout.DbModels.Shout> AddLike(string shoutId, UserBasicInformation like)
         {
             try
             {
                 var filter = Builders<Model.Shout.DbModels.Shout>.Filter.Eq(s => s.shoutId, shoutId);
                 var update = Builders<Model.Shout.DbModels.Shout>.Update.AddToSet(s => s.likes, like).Inc(s => s.likeCount, 1);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return result.IsAcknowledged;
+                var options = new FindOneAndUpdateOptions<Model.Shout.DbModels.Shout, Model.Shout.DbModels.Shout>();
+                options.IsUpsert = false;
+                options.ReturnDocument = ReturnDocument.After;
+                options.Projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.likes).Exclude(s => s.comments);
+                var result = await Collection.FindOneAndUpdateAsync(filter, update);
+                return result;
             }
             catch (Exception e)
             {
@@ -84,6 +88,7 @@ namespace TrafficNow.Repository.Implementation.Shout
                 var options = new FindOneAndUpdateOptions<Model.Shout.DbModels.Shout, Model.Shout.DbModels.Shout>();
                 options.IsUpsert = false;
                 options.ReturnDocument = ReturnDocument.After;
+                options.Projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s=>s.likes).Exclude(s => s.comments);
                 var result = await Collection.FindOneAndUpdateAsync(filter, update, options);
                 return result;
             }

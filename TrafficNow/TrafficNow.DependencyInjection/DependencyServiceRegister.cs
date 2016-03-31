@@ -53,6 +53,9 @@ namespace TrafficNow.DependencyInjection
             kernel.Bind<INotificationService>().To<NotificationService>();
             kernel.Bind<INotificationRepository>().To<NotificationRepository>();
             #endregion
+            #region mail
+            kernel.Bind<IMailService>().To<MailService>();
+            #endregion
             #region device
             kernel.Bind<IDeviceStatusRepository>().To<DeviceStatusRepository>();
             kernel.Bind<IDeviceService>().To<DeviceService>();

@@ -13,7 +13,7 @@ namespace TrafficNow.Service.Interface
         Task<UserBasicInformation> UserLogin(string identity, string password);
         Task<LeaderBoardResponse> GetLeaderBoard(string userId);
         Task<List<LeaderBoardModel>> GetAllLeaders(string userId, int offset = 0, int count = 10);
-        Task<bool> RegisterUser(User user);
+        Task<bool> RegisterUser(User user, string mailTeplatePath);
         Task<bool> FollowUser(UserBasicInformation user, UserBasicInformation userToFollow);
         Task<UserViewModel> GetUserById(string userId, string requesterUserId);
         Task<UserViewModel> UpdateUserInfo(UserInformation user, UserBasicInformation userData);

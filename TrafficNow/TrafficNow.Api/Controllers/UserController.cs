@@ -123,13 +123,14 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest("Username Already Taken");
                 }
+                var mailTemplatePath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/Templates/register.html");
                 var hashedPassword = _passwordHasher.GetHashedPassword(user.password);
                 user.password = hashedPassword;
                 user.userId = Guid.NewGuid().ToString();
                 user.showUserEmail = true;
                 var photoUrl = user.userId + "/profile/" + "profile_pic.jpg";
                 user.photo = s3Prefix+photoUrl;
-                var res = await _userService.RegisterUser(user);
+                var res = await _userService.RegisterUser(user, mailTemplatePath);
                 var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.jpg");
                 if (File.Exists(defaultPath))
                 {
@@ -415,7 +416,7 @@ namespace TrafficNow.Api.Controllers
                 }
                 if (await _userRepository.IsEmailTaken(userEmail))
                 {
-                    var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/App_Data/Templates/forgot-pass.html");
+                    var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/Templates/forgot-pass.html");
                     var res = await _userService.GetNewPassword(userEmail, defaultPath);
                 }
                 return Ok(new ResponseModel { message = "Email Has Been Sent" });
@@ -487,7 +488,7 @@ namespace TrafficNow.Api.Controllers
         }
         [VersionedRoute("user/getnotification", "aunthazel", "v1")]
         [HttpGet]
-        public async Task<IHttpActionResult> GetNotification()
+        public async Task<IHttpActionResult> GetNotification(int offset = 0, int count = 10)
         {
             try
             {
@@ -506,7 +507,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var notifications = await _notificationRepository.GetNotification(user.userId);
+                var notifications = await _notificationRepository.GetNotification(user.userId, offset, count);
                 return Ok(notifications);
             }
             catch (Exception e)

@@ -20,6 +20,7 @@ namespace TrafficNow.Repository.Interface.User
         Task<bool> RegisterUser(Model.User.DbModels.User user);
         Task<UserBasicInformation> LoginUsingEmail(string email, string password);
         Task<UserBasicInformation> GetUserUsingEmail(string email);
+        Task<bool> ResetPasswordUsingEmail(string email, string password);
         Task<UserBasicInformation> LoginUsingUserName(string userName, string password);
         Task<UserViewModel> UpdateUserInfo(UserInformation user, List<PairModel> updatedFields);
         #region follow

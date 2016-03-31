@@ -151,7 +151,7 @@ namespace TrafficNow.Service.Implementation
                 comment.time = _utility.GetTimeInMilliseconds();
                 comment.commentId = Guid.NewGuid().ToString();
                 var commentRes = await _shoutRepository.AddShoutComment(shoutId, comment);
-                var notificationText = Constants.NEWFOLLOWINGMSG;
+                var notificationText = Constants.NEWCOMMENTSMSG;
                 notificationText = notificationText.Replace("__NAME__", comment.commentor.userName);
                 var from = comment.commentor;
                 var to = new UserBasicInformation
@@ -166,7 +166,7 @@ namespace TrafficNow.Service.Implementation
                 var notificationAck = _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS);
                 return comment;
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 throw;
@@ -186,7 +186,21 @@ namespace TrafficNow.Service.Implementation
                 }
                 else
                 {
-                    result = await _shoutRepository.AddLike(shoutId, like);
+                    var shout = await _shoutRepository.AddLike(shoutId, like);
+                    var notificationText = Constants.NEWLIKEMSG;
+                    notificationText = notificationText.Replace("__NAME__", like.userName);
+                    var from = like;
+                    var to = new UserBasicInformation
+                    {
+                        userName = shout.userName,
+                        userId = shout.userId,
+                        photo = shout.photo,
+                        name = shout.name,
+                        email = shout.email,
+                        time = shout.time
+                    };
+                    var notificationAck = _notificationService.AddNotification(from, to, notificationText, Constants.NEWLIKE);
+                    result = true;
                 }
                 return result;
             }

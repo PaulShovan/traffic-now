@@ -12,5 +12,7 @@ namespace TrafficNow.Model.Constants
         public static string NEWFOLLOWING = "NEWFOLLOWING";
         public static string NEWCOMMENTSMSG = "__NAME__ comments on your buzz";
         public static string NEWCOMMENTS = "NEWCOMMENTS";
+        public static string NEWLIKEMSG = "__NAME__ likes on your buzz";
+        public static string NEWLIKE = "NEWLIKE";
     }
 }

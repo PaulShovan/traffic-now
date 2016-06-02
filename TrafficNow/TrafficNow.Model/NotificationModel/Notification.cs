@@ -10,6 +10,7 @@ namespace TrafficNow.Model.NotificationModel
     {
         public string type;
         public string text;
+        public string shoutId;
         public long time;
         public string participantUserName;
         public string participantUserId;

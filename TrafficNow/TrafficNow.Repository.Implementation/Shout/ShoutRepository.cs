@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrafficNow.Model.Constants;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
 using TrafficNow.Model.User.DbModels;
@@ -14,7 +15,6 @@ namespace TrafficNow.Repository.Implementation.Shout
 {
     public class ShoutRepository : Repository<Model.Shout.DbModels.Shout>, IShoutRepository
     {
-
         public async Task<Model.Shout.DbModels.Shout> AddLike(string shoutId, UserBasicInformation like)
         {
             try
@@ -25,7 +25,7 @@ namespace TrafficNow.Repository.Implementation.Shout
                 options.IsUpsert = false;
                 options.ReturnDocument = ReturnDocument.After;
                 options.Projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.likes).Exclude(s => s.comments);
-                var result = await Collection.FindOneAndUpdateAsync(filter, update);
+                var result = await Collection.FindOneAndUpdateAsync(filter, update, options);
                 return result;
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace TrafficNow.Repository.Implementation.Shout
             try
             {
                 var filter = Builders<Model.Shout.DbModels.Shout>.Filter.Eq(s => s.shoutId, shoutId);
-                var update = Builders<Model.Shout.DbModels.Shout>.Update.PullFilter(p => p.likes, f => f.userId == like.userId).Inc(s=>s.likeCount, -1);
+                var update = Builders<Model.Shout.DbModels.Shout>.Update.PullFilter(p => p.likes, f => f.userId == like.userId).Inc(s => s.likeCount, -1);
                 var result = await Collection.UpdateOneAsync(filter, update);
                 return result.IsAcknowledged;
             }
@@ -88,7 +88,7 @@ namespace TrafficNow.Repository.Implementation.Shout
                 var options = new FindOneAndUpdateOptions<Model.Shout.DbModels.Shout, Model.Shout.DbModels.Shout>();
                 options.IsUpsert = false;
                 options.ReturnDocument = ReturnDocument.After;
-                options.Projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s=>s.likes).Exclude(s => s.comments);
+                options.Projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.likes).Exclude(s => s.comments);
                 var result = await Collection.FindOneAndUpdateAsync(filter, update, options);
                 return result;
             }
@@ -118,8 +118,9 @@ namespace TrafficNow.Repository.Implementation.Shout
         {
             try
             {
-                var shout = await Collection.Find(s => s.shoutId == shoutId).FirstOrDefaultAsync();
-                if(shout == null)
+                var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.loc);
+                var shout = await Collection.Find(s => s.shoutId == shoutId).Project<Model.Shout.DbModels.Shout>(projection).FirstOrDefaultAsync();
+                if (shout == null)
                 {
                     return null;
                 }
@@ -153,7 +154,7 @@ namespace TrafficNow.Repository.Implementation.Shout
         {
             try
             {
-                var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Include(s=>s.comments).Slice(x => x.comments, skip, limit).Exclude("_id");
+                var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Include(s => s.comments).Slice(x => x.comments, skip, limit).Exclude("_id");
                 var result = await Collection.Find(shout => shout.shoutId == shoutId).Project<Model.Shout.DbModels.Shout>(projection).FirstOrDefaultAsync();
                 return result.comments;
             }
@@ -170,7 +171,7 @@ namespace TrafficNow.Repository.Implementation.Shout
                 List<ShoutViewModel> shouts = new List<ShoutViewModel>();
                 var sortBuilder = Builders<Model.Shout.DbModels.Shout>.Sort;
                 var sortOrder = sortBuilder.Descending(s => s.time);
-                var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s=>s.loc);
+                var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s => s.loc);
                 var result = await Collection.Find(shout => shout.userId == userId).Project<Model.Shout.DbModels.Shout>(projection).Sort(sortOrder).Skip(offset).Limit(count).ToListAsync();
                 //result.ForEach(x => shouts.Add(x));
                 foreach (var shout in result)
@@ -193,7 +194,7 @@ namespace TrafficNow.Repository.Implementation.Shout
                         attachments = shout.attachments
                     };
                     var like = shout.likes.SingleOrDefault(s => s.userId == userId);
-                    if(like != null)
+                    if (like != null)
                     {
                         shoutModel.isLikedByUser = true;
                     }
@@ -283,7 +284,7 @@ namespace TrafficNow.Repository.Implementation.Shout
             try
             {
                 List<ShoutViewModel> shouts = new List<ShoutViewModel>();
-                var filter = Builders<Model.Shout.DbModels.Shout>.Filter.In( s=>s.userId, followers);
+                var filter = Builders<Model.Shout.DbModels.Shout>.Filter.In(s => s.userId, followers);
                 var sortBuilder = Builders<Model.Shout.DbModels.Shout>.Sort;
                 var sortOrder = sortBuilder.Descending(s => s.time);
                 var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Slice(x => x.comments, 0, 5).Exclude("_id").Exclude(s => s.loc).Exclude(s => s.likes);
@@ -359,6 +360,41 @@ namespace TrafficNow.Repository.Implementation.Shout
             {
                 throw;
 
+            }
+        }
+
+        public async Task<ShoutViewModel> GetSharedShout(string sharedLink, bool isAuthorized)
+        {
+            try
+            {
+                var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.loc).Exclude(s => s.comments);
+                var shout = await Collection.Find(s => s.sharableLink == sharedLink).Project<Model.Shout.DbModels.Shout>(projection).FirstOrDefaultAsync();
+                if (shout == null)
+                {
+                    return null;
+                }
+                return new ShoutViewModel
+                {
+                    shoutId = isAuthorized ? shout.shoutId : "",
+                    name = shout.name,
+                    userId = isAuthorized ? shout.userId : "",
+                    userName = shout.userName,
+                    sharableLink = shout.sharableLink,
+                    photo = shout.photo,
+                    shoutText = shout.shoutText,
+                    likeCount = shout.likeCount,
+                    commentCount = shout.commentCount,
+                    comments = shout.comments,
+                    location = shout.location,
+                    time = shout.time,
+                    trafficCondition = shout.trafficCondition,
+                    attachments = shout.attachments
+                };
+            }
+            catch (Exception e)
+            {
+
+                throw;
             }
         }
     }

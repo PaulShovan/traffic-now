@@ -14,5 +14,6 @@ namespace TrafficNow.Model.Constants
         public static string NEWCOMMENTS = "NEWCOMMENTS";
         public static string NEWLIKEMSG = "__NAME__ likes on your buzz";
         public static string NEWLIKE = "NEWLIKE";
+        public static string BASEURL = "www.digbuzzi.com/sharedLink?";
     }
 }

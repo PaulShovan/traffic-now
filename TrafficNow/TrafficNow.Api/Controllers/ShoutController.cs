@@ -22,6 +22,7 @@ namespace TrafficNow.Api.Controllers
     [RoutePrefix("api")]
     public class ShoutController : ApiController
     {
+        private const string baseUrl = "www.digbuzzi.com/sharedLink?";
         private IShoutService _shoutService;
         private IShoutRepository _shoutRepository;
         private StorageService _storageService;
@@ -140,13 +141,44 @@ namespace TrafficNow.Api.Controllers
                 return InternalServerError();
             }
         }
+        [VersionedRoute("shouts/getsharedshout", "aunthazel", "v1")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetSharedShout(string sharedLink = "")
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(sharedLink))
+                {
+                    return BadRequest();
+                }
+                sharedLink = baseUrl + sharedLink;
+                var token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                bool isAuthorized = !string.IsNullOrEmpty(token);
+                var shout = await _shoutRepository.GetSharedShout(sharedLink, isAuthorized);
+                if (shout == null)
+                {
+                    return NotFound();
+                }
+                //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
+                return Ok(shout);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
         [Authorize]
         [VersionedRoute("shouts/nearbybuzz", "aunthazel", "v1")]
         public async Task<IHttpActionResult> GetNearbyBuzz(double lat = 0, double lon = 0, double rad = 10)
         {
             try
             {
-                if(rad < 0)
+                if (rad < 0)
                 {
                     return BadRequest();
                 }
@@ -173,7 +205,7 @@ namespace TrafficNow.Api.Controllers
         }
         [Authorize]
         [VersionedRoute("shouts/getusershouts", "aunthazel", "v1")]
-        public async Task<IHttpActionResult> GetUserShouts(int? offset = 0, int? count = 10, string userId="")
+        public async Task<IHttpActionResult> GetUserShouts(int? offset = 0, int? count = 10, string userId = "")
         {
             try
             {

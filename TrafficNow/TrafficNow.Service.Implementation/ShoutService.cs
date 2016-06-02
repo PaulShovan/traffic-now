@@ -23,7 +23,9 @@ namespace TrafficNow.Service.Implementation
         private IPointService _pointService;
         private IPointRepository _pointRepository;
         private IFollowerRepository _followerRepository;
+        private IFollowingRepository _followingRepository;
         private INotificationService _notificationService;
+        private CryptoHelper _cryptoHelper;
         private Utility _utility;
         private const string baseUrl = "www.digbuzzi.com/sharedLink?";
         private bool IsValidTrafficCondition(string condition)
@@ -50,7 +52,7 @@ namespace TrafficNow.Service.Implementation
         }
         public ShoutService(IShoutRepository shoutRepository, IUserRepository userRepository, 
             IPointService pointService, IPointRepository pointRepository, IFollowerRepository followerRepository, 
-            INotificationService notificationService)
+            INotificationService notificationService, IFollowingRepository followingRepository)
         {
             _shoutRepository = shoutRepository;
             _userRepository = userRepository;
@@ -58,63 +60,19 @@ namespace TrafficNow.Service.Implementation
             _pointRepository = pointRepository;
             _followerRepository = followerRepository;
             _notificationService = notificationService;
+            _followingRepository = followingRepository;
             _utility = new Utility();
+            _cryptoHelper = new CryptoHelper();
         }
         private string GenerateSharableLink(Shout shout)
         {
             try
             {
-                var sharableLink = "";
-                var builder = new StringBuilder();
-                builder
-                    .Append("photo=")
-                    .Append(shout.photo)
-                    .Append("&")
-                    .Append("userName=")
-                    .Append(shout.userName)
-                    .Append("&")
-                    .Append("shoutText=")
-                    .Append(shout.shoutText)
-                    .Append("&")
-                    .Append("likeCount=")
-                    .Append(shout.likeCount)
-                    .Append("&")
-                    .Append("commentCount=")
-                    .Append(shout.commentCount)
-                    .Append("&")
-                    .Append("shareCount=")
-                    .Append(shout.shareCount)
-                    .Append("&")
-                    .Append("trafficCondition=")
-                    .Append(shout.trafficCondition)
-                    .Append("&")
-                    .Append("place=")
-                    .Append(shout.location.place)
-                    .Append("&")
-                    .Append("city=")
-                    .Append(shout.location.city)
-                    .Append("&")
-                    .Append("country=")
-                    .Append(shout.location.country)
-                    .Append("&")
-                    .Append("latitude=")
-                    .Append(shout.location.latitude)
-                    .Append("&")
-                    .Append("longitude=")
-                    .Append(shout.location.longitude);
-                if(shout.attachments.Count > 0)
-                {
-                    builder.Append("&")
-                    .Append("attachments=")
-                    .Append(shout.attachments[0]);
-                }
-                sharableLink = Uri.EscapeUriString(builder.ToString());
-                sharableLink = baseUrl + sharableLink;
-                return sharableLink;
+                string sharableLink = _cryptoHelper.GetSHA1OfString(shout.shoutId);
+                return baseUrl+sharableLink;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -163,7 +121,7 @@ namespace TrafficNow.Service.Implementation
                     email = commentRes.email,
                     time = commentRes.time
                 };
-                var notificationAck = _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS);
+                var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS, shoutId);
                 return comment;
             }
             catch (Exception e)
@@ -199,7 +157,7 @@ namespace TrafficNow.Service.Implementation
                         email = shout.email,
                         time = shout.time
                     };
-                    var notificationAck = _notificationService.AddNotification(from, to, notificationText, Constants.NEWLIKE);
+                    var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWLIKE, shoutId);
                     result = true;
                 }
                 return result;
@@ -213,7 +171,7 @@ namespace TrafficNow.Service.Implementation
         {
             try
             {
-                var followers = await _followerRepository.GetFollowers(userId, 0, int.MaxValue);
+                var followers = await _followingRepository.GetFollowings(userId, 0, int.MaxValue);
                 List<string> followersId = new List<string>();
                 foreach (var item in followers)
                 {

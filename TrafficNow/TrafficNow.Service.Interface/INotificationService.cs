@@ -10,6 +10,6 @@ namespace TrafficNow.Service.Interface
     public interface INotificationService
     {
         void SendNotification(List<string> devices, string payload);
-        Task<bool> AddNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type);
+        Task<bool> AddNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type, string shoutId="");
     }
 }

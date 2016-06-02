@@ -117,21 +117,21 @@ namespace TrafficNow.Api.Controllers
                 }
                 if(await _userRepository.IsEmailTaken(user.email))
                 {
-                    return BadRequest("Email Already Taken");
+                    return Conflict();
                 }
                 if (await _userRepository.IsUserNameTaken(user.userName))
                 {
-                    return BadRequest("Username Already Taken");
+                    return Conflict();
                 }
                 var mailTemplatePath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/Templates/register.html");
                 var hashedPassword = _passwordHasher.GetHashedPassword(user.password);
                 user.password = hashedPassword;
                 user.userId = Guid.NewGuid().ToString();
                 user.showUserEmail = true;
-                var photoUrl = user.userId + "/profile/" + "profile_pic.jpg";
+                var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                 user.photo = s3Prefix+photoUrl;
                 var res = await _userService.RegisterUser(user, mailTemplatePath);
-                var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.jpg");
+                var defaultPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/App_Data/DefaultProfilePic/profile_pic.png");
                 if (File.Exists(defaultPath))
                 {
                     FileStream fileStream = File.OpenRead(defaultPath);
@@ -228,7 +228,7 @@ namespace TrafficNow.Api.Controllers
                 }
                 foreach (var file in provider.Files)
                 {
-                    var photoUrl = user.userId + "/profile/" + "profile_pic.jpg";
+                    var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                     Stream stream = await file.ReadAsStreamAsync();
                     _storageService.UploadFile("trafficnow", photoUrl, stream);
                     userInfo.photo = s3Prefix + photoUrl;

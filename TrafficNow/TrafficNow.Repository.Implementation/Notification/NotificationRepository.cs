@@ -30,7 +30,9 @@ namespace TrafficNow.Repository.Implementation.Notification
             try
             {
                 var projection = Builders<Model.NotificationModel.Notification>.Projection.Exclude("_id");
-                var result = await Collection.Find(n => n.receipentUserId == userId).Project<Model.NotificationModel.Notification>(projection).Skip(skip).Limit(limit).ToListAsync();
+                var sortBuilder = Builders<Model.NotificationModel.Notification>.Sort;
+                var sortOrder = sortBuilder.Descending(s => s.time);
+                var result = await Collection.Find(n => n.receipentUserId == userId).Project<Model.NotificationModel.Notification>(projection).Sort(sortOrder).Skip(skip).Limit(limit).ToListAsync();
                 return result;
             }
             catch (Exception e)

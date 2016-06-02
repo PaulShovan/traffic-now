@@ -104,7 +104,7 @@ namespace TrafficNow.Service.Implementation
                 {
                     var html = File.ReadAllText(mailTemplatePath);
                     html = html.Replace("__NAME__", user.userName);
-                    var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Welcome to digbuzzi", html);
+                    //var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Welcome to digbuzzi", html);
                 };
                 return true;
             }
@@ -313,7 +313,7 @@ namespace TrafficNow.Service.Implementation
                 }
                 var html = File.ReadAllText(bodyPath);
                 html = html.Replace("__NAME__", user.userName);
-                var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Digbuzzi-Forget Password", html);
+                //var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Digbuzzi-Forget Password", html);
                 return true;
             }
             catch (Exception)

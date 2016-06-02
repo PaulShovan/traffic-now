@@ -193,7 +193,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\DefaultProfilePic\profile_pic.jpg" />
+    <Content Include="App_Data\DefaultProfilePic\profile_pic.png" />
     <Content Include="App_Data\Templates\forgot-pass.html" />
     <Content Include="App_Data\Templates\register.html" />
     <Content Include="Global.asax" />

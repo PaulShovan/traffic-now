@@ -95,13 +95,14 @@ namespace TrafficNow.Service.Implementation
         {
             Console.WriteLine("Channel Created for: " + sender);
         }
-        private Model.NotificationModel.Notification PrepareNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type)
+        private Model.NotificationModel.Notification PrepareNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type, string shoutId = "")
         {
             try
             {
                 var notification = new Model.NotificationModel.Notification();
                 notification.type = type;
                 notification.text = payload;
+                notification.shoutId = shoutId;
                 notification.time = _utility.GetTimeInMilliseconds();
                 notification.participantUserId = from.userId;
                 notification.participantUserName = from.userName;
@@ -116,17 +117,17 @@ namespace TrafficNow.Service.Implementation
                 throw;
             }
         }
-        public async Task<bool> AddNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type)
+        public async Task<bool> AddNotification(UserBasicInformation from, UserBasicInformation to, string payload, string type, string shoutId = "")
         {
             try
             {
-                var notification = PrepareNotification(from, to, payload, type);
+                var notification = PrepareNotification(from, to, payload, type, shoutId);
                 await _notificationRepository.AddNotification(notification);
                 var devices = await _deviceService.GetDiviceIds(to.userId);
-                //if(devices.Count < 1)
-                //{
-                //    return true;
-                //}
+                if (devices.Count < 1)
+                {
+                    return true;
+                }
                 var payloadToSend = JsonConvert.SerializeObject(notification);
                 SendNotification(devices, payloadToSend);
                 return true;

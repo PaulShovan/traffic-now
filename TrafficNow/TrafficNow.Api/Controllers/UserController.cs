@@ -425,7 +425,6 @@ namespace TrafficNow.Api.Controllers
             {
                 return InternalServerError(e);
             }
-            return Ok(new ResponseModel { message = "Email Has Been Sent" });
         }
         
         [Authorize]

@@ -18,11 +18,11 @@ namespace TrafficNow.Service.Implementation
             
 
             // Supply your SMTP credentials below. Note that your SMTP credentials are different from your AWS credentials.
-            const String SMTP_USERNAME = "AKIAI5B74QQSXUSBNH3A";  // Replace with your SMTP username.
-            const String SMTP_PASSWORD = "Aoj+tOrMytJU2QYkKS/51Syq/nefeBXgcZ8BmE/9mfnf";  // Replace with your SMTP password.
+            const String SMTP_USERNAME = "digbuzzi";  // Replace with your SMTP username.
+            const String SMTP_PASSWORD = "CQ8G8f62JBH42gmRdx6nsw";  // Replace with your SMTP password.
 
             // Amazon SES SMTP host name. This example uses the US West (Oregon) region.
-            const String HOST = "email-smtp.us-west-2.amazonaws.com";
+            const String HOST = "smtp.mandrillapp.com";
 
             // Port we will connect to on the Amazon SES SMTP endpoint. We are choosing port 587 because we will use
             // STARTTLS to encrypt the connection.

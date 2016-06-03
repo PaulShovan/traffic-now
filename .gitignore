@@ -96,8 +96,9 @@ publish/
 # NuGet Packages Directory
 
 packages/
-# VS File Directory
+# Visual Studio 2015 cache/options directory
 .vs/
+
 # Windows Azure Build Output
 csx
 *.build.csdef

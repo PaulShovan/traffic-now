@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\IRepository.cs" />
+    <Compile Include="Map\IPlaceRepository.cs" />
     <Compile Include="Map\IMapRepository.cs" />
     <Compile Include="Notification\INotificationRepository.cs" />
     <Compile Include="Point\IPointRepository.cs" />

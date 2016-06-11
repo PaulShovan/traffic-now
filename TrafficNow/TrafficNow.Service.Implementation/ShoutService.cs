@@ -121,6 +121,10 @@ namespace TrafficNow.Service.Implementation
                     email = commentRes.email,
                     time = commentRes.time
                 };
+                if(from.userId == to.userId)
+                {
+                    return comment;
+                }
                 var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS, shoutId);
                 return comment;
             }
@@ -157,6 +161,10 @@ namespace TrafficNow.Service.Implementation
                         email = shout.email,
                         time = shout.time
                     };
+                    if (from.userId == to.userId)
+                    {
+                        return result;
+                    }
                     var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWLIKE, shoutId);
                     result = true;
                 }

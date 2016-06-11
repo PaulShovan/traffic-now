@@ -132,7 +132,7 @@ namespace TrafficNow.Api.Controllers
                     token = values.FirstOrDefault();
                 }
                 var user = _tokenGenerator.GetUserFromToken(token);
-                var shouts = await _shoutRepository.GetShouts(offset, count, user.userId);
+                var shouts = await _shoutRepository.GetShouts(offset*count, count, user.userId);
                 //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shouts);
             }
@@ -224,7 +224,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var shouts = await _shoutRepository.GetShoutsOfUser(offset, count, userId);
+                var shouts = await _shoutRepository.GetShoutsOfUser(offset*count, count, userId);
                 //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shouts);
             }
@@ -252,7 +252,7 @@ namespace TrafficNow.Api.Controllers
                     return BadRequest("Invalid User");
                 }
                 userId = user.userId;
-                var shouts = await _shoutService.GetFollowersShouts(offset, count, userId);
+                var shouts = await _shoutService.GetFollowersShouts(offset*count, count, userId);
                 //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shouts);
             }
@@ -295,7 +295,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var shout = await _shoutRepository.GetShoutComments(id, skip, limit);
+                var shout = await _shoutRepository.GetShoutComments(id, skip*limit, limit);
                 //var response = new GenericResponse<List<Comment>>(shout);
                 return Ok(shout);
             }

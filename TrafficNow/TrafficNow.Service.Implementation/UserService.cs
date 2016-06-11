@@ -257,7 +257,7 @@ namespace TrafficNow.Service.Implementation
             try
             {
                 int rankStart = offset * count;
-                var points = await _pointRepository.GetPoints(userId, offset, count);
+                var points = await _pointRepository.GetPoints(userId, offset*count, count);
                 points = points.OrderByDescending(o => o.totalPoint).ToList();
                 List<string> leadersId = new List<string>();
                 List<LeaderBoardModel> leaderList = new List<LeaderBoardModel>();

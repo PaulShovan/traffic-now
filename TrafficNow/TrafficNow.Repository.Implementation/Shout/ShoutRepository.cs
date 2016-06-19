@@ -114,7 +114,7 @@ namespace TrafficNow.Repository.Implementation.Shout
             }
         }
 
-        public async Task<ShoutViewModel> GetShoutById(string shoutId)
+        public async Task<ShoutViewModel> GetShoutById(string shoutId, string userId)
         {
             try
             {
@@ -139,7 +139,8 @@ namespace TrafficNow.Repository.Implementation.Shout
                     location = shout.location,
                     time = shout.time,
                     trafficCondition = shout.trafficCondition,
-                    attachments = shout.attachments
+                    attachments = shout.attachments,
+                    isLikedByUser = shout.likes.SingleOrDefault(s => s.userId == userId) == null ? false : true
                 };
                 //return result;
             }

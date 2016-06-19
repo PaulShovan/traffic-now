@@ -213,7 +213,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\InMemoryMultipartStreamProvider.cs" />
-    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\StorageService.cs" />
     <Compile Include="Helpers\TokenGenerator.cs" />
     <Compile Include="Helpers\VersionConstraint.cs" />

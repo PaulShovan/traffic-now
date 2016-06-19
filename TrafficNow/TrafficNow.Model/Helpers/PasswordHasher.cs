@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
+using System.Threading.Tasks;
 
-namespace TrafficNow.Api.Helpers
+namespace TrafficNow.Model.Helpers
 {
     public class PasswordHasher
     {
@@ -21,7 +21,6 @@ namespace TrafficNow.Api.Helpers
             }
             catch (Exception e)
             {
-
                 throw;
             }
         }

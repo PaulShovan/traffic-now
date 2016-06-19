@@ -12,6 +12,7 @@ using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Api.Models;
 using TrafficNow.Api.Response;
+using TrafficNow.Model.Helpers;
 using TrafficNow.Model.User.DbModels;
 using TrafficNow.Model.User.ViewModels;
 using TrafficNow.Repository.Interface.Notification;

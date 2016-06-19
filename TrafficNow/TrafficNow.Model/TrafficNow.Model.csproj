@@ -58,6 +58,7 @@
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\MultipartParser.cs" />
     <Compile Include="Helpers\PairModel.cs" />
+    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\Utility.cs" />
     <Compile Include="Map\LocationViewModel.cs" />
     <Compile Include="Map\Place.cs" />

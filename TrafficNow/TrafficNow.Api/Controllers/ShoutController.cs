@@ -271,7 +271,20 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var shout = await _shoutRepository.GetShoutById(id);
+                string token = "";
+                string userId = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                userId = user.userId;
+                var shout = await _shoutRepository.GetShoutById(id, userId);
                 if (shout == null)
                 {
                     return NotFound();

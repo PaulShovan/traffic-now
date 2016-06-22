@@ -45,6 +45,8 @@
     <Compile Include="IFollowingService.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="IMapService.cs" />
+    <Compile Include="IMessageReceiveService.cs" />
+    <Compile Include="IMessageSendService.cs" />
     <Compile Include="INotificationService.cs" />
     <Compile Include="IPointService.cs" />
     <Compile Include="IShoutService.cs" />

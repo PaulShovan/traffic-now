@@ -52,8 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Amqp\AmqpMessageModel.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Device\DeviceStatus.cs" />
+    <Compile Include="Enums\AmqpTypes.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\MultipartParser.cs" />

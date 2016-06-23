@@ -66,6 +66,7 @@
     <Compile Include="Map\Place.cs" />
     <Compile Include="Map\PlaceViewModel.cs" />
     <Compile Include="NotificationModel\Notification.cs" />
+    <Compile Include="NotificationModel\NotificationBaseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shout\DbModels\Comment.cs" />
     <Compile Include="Shout\DbModels\Location.cs" />

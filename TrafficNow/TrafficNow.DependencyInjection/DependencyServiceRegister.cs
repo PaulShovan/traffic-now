@@ -26,7 +26,7 @@ namespace TrafficNow.DependencyInjection
 {
     public class DependencyServiceRegister
     {
-        public void Register(KernelBase kernel)
+        public void Register(IKernel kernel)
         {
             #region user
             kernel.Bind<IUserService>().To<UserService>();

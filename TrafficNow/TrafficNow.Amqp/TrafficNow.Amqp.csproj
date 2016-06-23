@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ChannelMap.cs" />
     <Compile Include="ConnectionHelper.cs" />
+    <Compile Include="MessageReceiveService.cs" />
     <Compile Include="MessageSendService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

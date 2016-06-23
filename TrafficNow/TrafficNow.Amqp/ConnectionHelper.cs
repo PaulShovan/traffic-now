@@ -53,9 +53,9 @@ namespace TrafficNow.Amqp
         {
             _connectionFactory = new ConnectionFactory
             {
-                HostName = ConfigurationManager.AppSettings["RabbitHostName"],
-                UserName = ConfigurationManager.AppSettings["RabbitUserName"],
-                Password = ConfigurationManager.AppSettings["RabbitPassword"]
+                HostName = "127.0.0.1",//ConfigurationManager.AppSettings["RabbitHostName"],
+                UserName = "digbuzzi",//ConfigurationManager.AppSettings["RabbitUserName"],
+                Password = "!23456",//ConfigurationManager.AppSettings["RabbitPassword"]
             };
             _connection = _connectionFactory.CreateConnection();
             _model = _connection.CreateModel();

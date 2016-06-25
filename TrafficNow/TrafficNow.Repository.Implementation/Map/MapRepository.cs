@@ -42,7 +42,6 @@ namespace TrafficNow.Repository.Implementation.Map
             catch (Exception e)
             {
                 throw;
-
             }
         }
     }

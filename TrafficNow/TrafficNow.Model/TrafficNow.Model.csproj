@@ -52,8 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Amqp\AmqpMessageModel.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Device\DeviceStatus.cs" />
+    <Compile Include="Enums\AmqpTypes.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\MultipartParser.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="Map\Place.cs" />
     <Compile Include="Map\PlaceViewModel.cs" />
     <Compile Include="NotificationModel\Notification.cs" />
+    <Compile Include="NotificationModel\NotificationBaseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shout\DbModels\Comment.cs" />
     <Compile Include="Shout\DbModels\Location.cs" />

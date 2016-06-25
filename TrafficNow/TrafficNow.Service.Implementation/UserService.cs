@@ -317,7 +317,7 @@ namespace TrafficNow.Service.Implementation
                     return false;
                 }
                 var html = File.ReadAllText(bodyPath);
-                html = html.Replace("__NAME__", user.userName);
+                html = html.Replace("__NAME__", user.userName).Replace("__PASS__", pass);
                 var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Digbuzzi-Forget Password", html);
                 return true;
             }

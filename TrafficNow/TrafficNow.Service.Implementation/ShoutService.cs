@@ -185,7 +185,7 @@ namespace TrafficNow.Service.Implementation
                 {
                     followersId.Add(item.userId);
                 }
-                return await _shoutRepository.GetFollowersShouts(offset*count, count, followersId);
+                return await _shoutRepository.GetFollowersShouts(offset, count, followersId);
             }
             catch (Exception)
             {

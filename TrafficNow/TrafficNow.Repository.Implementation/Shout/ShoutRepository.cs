@@ -322,8 +322,10 @@ namespace TrafficNow.Repository.Implementation.Shout
             {
                 List<ShoutViewModel> shouts = new List<ShoutViewModel>();
                 var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.loc);
+                var sortBuilder = Builders<Model.Shout.DbModels.Shout>.Sort;
+                var sortOrder = sortBuilder.Descending(s => s.time);
                 var filter = Builders<Model.Shout.DbModels.Shout>.Filter.NearSphere(x => x.loc, lon, lat, rad / 3963.2);
-                var result = await Collection.Find(filter).Project<Model.Shout.DbModels.Shout>(projection).ToListAsync();
+                var result = await Collection.Find(filter).Project<Model.Shout.DbModels.Shout>(projection).Sort(sortOrder).ToListAsync();
                 foreach (var shout in result)
                 {
                     var shoutModel = new ShoutViewModel

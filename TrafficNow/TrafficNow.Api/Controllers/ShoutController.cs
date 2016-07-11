@@ -5,6 +5,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -164,6 +165,9 @@ namespace TrafficNow.Api.Controllers
                 {
                     return NotFound();
                 }
+                byte[] bytes = Encoding.Default.GetBytes(shout.shoutText);
+                var shoutText = Encoding.UTF8.GetString(bytes);
+                shout.shoutText = shoutText;
                 //var response = new GenericResponse<List<ShoutViewModel>>(shouts);
                 return Ok(shout);
             }

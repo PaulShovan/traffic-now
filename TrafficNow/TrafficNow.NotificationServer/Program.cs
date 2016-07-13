@@ -14,12 +14,19 @@ namespace TrafficNow.NotificationServer
         /// </summary>
         private static void Main()
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
+            try
             {
-                new NotificationServer()
-            };
-            ServiceBase.Run(ServicesToRun);
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[]
+                {
+                    new NotificationServer()
+                };
+                ServiceBase.Run(ServicesToRun);
+            }
+            catch (Exception)
+            {
+                
+            }
         }
     }
 }

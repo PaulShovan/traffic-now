@@ -22,23 +22,42 @@ namespace TrafficNow.NotificationServer
         }
         protected override void OnStart(string[] args)
         {
-            InitializeDependencyInjection();
-            var messageReceiveService = new MessageReceiveService();
-            _timer = new Timer(10000);
-            _timer.Elapsed += (s, e) => PullNotification(messageReceiveService);
-            _timer.Enabled = true;
+            try
+            {
+                InitializeDependencyInjection();
+                var messageReceiveService = new MessageReceiveService();
+                _timer = new Timer(10000);
+                _timer.Elapsed += (s, e) => PullNotification(messageReceiveService);
+                _timer.Enabled = true;
 #if DEBUG
             System.Diagnostics.Debugger.Launch();
 #endif
+            }
+            catch (Exception)
+            {
+                
+            }
+            
         }
         protected override void OnStop()
         {
-            _timer.Enabled = false;
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
         }
         private static void InitializeDependencyInjection()
         {
-            var dependencyResolver = new DependencyResolver();
-            dependencyResolver.Resolve();
+            try
+            {
+                var dependencyResolver = new DependencyResolver();
+                dependencyResolver.Resolve();
+            }
+            catch (Exception)
+            {
+                
+            }
         }
         private static void SendNotification(NotificationBaseModel data)
         {
@@ -52,7 +71,7 @@ namespace TrafficNow.NotificationServer
                 }
                 catch (Exception exception)
                 {
-                    System.Diagnostics.Debugger.Launch(); 
+                    //System.Diagnostics.Debugger.Launch(); 
                 }
             });
         }
@@ -69,7 +88,7 @@ namespace TrafficNow.NotificationServer
             }
             catch (Exception exception)
             {
-                System.Diagnostics.Debugger.Launch();
+                //System.Diagnostics.Debugger.Launch();
             }
         }
     }

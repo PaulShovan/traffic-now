@@ -12,6 +12,7 @@ using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Api.Response;
 using TrafficNow.Core.Helpers;
+using TrafficNow.Model.Common;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
 using TrafficNow.Model.User.DbModels;

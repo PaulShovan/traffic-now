@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrafficNow.Model.Shout.DbModels
+namespace TrafficNow.Model.Common
 {
     public class LocationGeo
     {

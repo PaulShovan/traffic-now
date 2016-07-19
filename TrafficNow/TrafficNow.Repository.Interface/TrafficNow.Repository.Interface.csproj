@@ -44,6 +44,7 @@
     <Compile Include="Map\IPlaceRepository.cs" />
     <Compile Include="Map\IMapRepository.cs" />
     <Compile Include="Notification\INotificationRepository.cs" />
+    <Compile Include="Places\IPlaceRepository.cs" />
     <Compile Include="Point\IPointRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shout\IShoutRepository.cs" />

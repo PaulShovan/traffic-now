@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Model.User.DbModels;
 
-namespace TrafficNow.Model.Shout.DbModels
+namespace TrafficNow.Model.Common
 {
     public class Comment
     {

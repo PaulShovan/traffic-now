@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Core.Helpers;
+using TrafficNow.Model.Common;
 using TrafficNow.Model.Constants;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
@@ -83,7 +84,6 @@ namespace TrafficNow.Service.Implementation
                 if (ValidateShout(shout))
                 {
                     shout.time = _utility.GetTimeInMilliseconds();
-                    shout.shoutId = Guid.NewGuid().ToString();
                     shout.loc.coordinates[0] = shout.location.longitude;
                     shout.loc.coordinates[1] = shout.location.latitude;
                     shout.sharableLink = GenerateSharableLink(shout);

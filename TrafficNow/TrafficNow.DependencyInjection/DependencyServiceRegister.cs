@@ -8,6 +8,7 @@ using TrafficNow.Amqp;
 using TrafficNow.Repository.Implementation.Device;
 using TrafficNow.Repository.Implementation.Map;
 using TrafficNow.Repository.Implementation.Notification;
+using TrafficNow.Repository.Implementation.Places;
 using TrafficNow.Repository.Implementation.Point;
 using TrafficNow.Repository.Implementation.Shout;
 using TrafficNow.Repository.Implementation.User;
@@ -61,6 +62,10 @@ namespace TrafficNow.DependencyInjection
             #region device
             kernel.Bind<IDeviceStatusRepository>().To<DeviceStatusRepository>();
             kernel.Bind<IDeviceService>().To<DeviceService>();
+            #endregion
+            #region place
+            kernel.Bind<Repository.Interface.Places.IPlaceRepository>().To<PlaceRepository>();
+            kernel.Bind<IPlaceService>().To<PlaceService>();
             #endregion
         }
     }

@@ -48,6 +48,7 @@
     <Compile Include="IMessageReceiveService.cs" />
     <Compile Include="IMessageSendService.cs" />
     <Compile Include="INotificationService.cs" />
+    <Compile Include="IPlaceService.cs" />
     <Compile Include="IPointService.cs" />
     <Compile Include="IShoutService.cs" />
     <Compile Include="IUserService.cs" />

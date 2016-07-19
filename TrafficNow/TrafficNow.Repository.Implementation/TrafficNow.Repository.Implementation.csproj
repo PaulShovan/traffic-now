@@ -58,6 +58,7 @@
     <Compile Include="Device\DeviceStatusRepository.cs" />
     <Compile Include="Map\MapRepository.cs" />
     <Compile Include="Notification\NotificationRepository.cs" />
+    <Compile Include="Places\PlaceRepository.cs" />
     <Compile Include="Point\PointRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\SettingsData.Designer.cs">

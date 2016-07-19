@@ -29,6 +29,9 @@ namespace TrafficNow.NotificationServer
                 _timer = new Timer(10000);
                 _timer.Elapsed += (s, e) => PullNotification(messageReceiveService);
                 _timer.Enabled = true;
+                _timer.AutoReset = true;                                  // makes it repeat
+                _timer.Start();
+
 #if DEBUG
             System.Diagnostics.Debugger.Launch();
 #endif

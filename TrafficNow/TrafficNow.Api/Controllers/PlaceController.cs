@@ -110,5 +110,38 @@ namespace TrafficNow.Api.Controllers
                 return InternalServerError();
             }
         }
+        [Authorize]
+        [VersionedRoute("places/nearbyplaces", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetNearbyPlaces(double lat, double lon, double rad = 10)
+        {
+            try
+            {
+                string token = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if(user == null)
+                {
+                    return BadRequest();
+                }
+                double latitude, longitude;
+                bool isDouble = (double.TryParse(lat.ToString(), out latitude) && double.TryParse(lon.ToString(), out longitude));
+                if (!isDouble)
+                {
+                    return BadRequest("Invalid data");
+                }
+                var places = await _placeService.GetNearbyPlaces(lat, lon, rad, user.userId);
+                //var shapedShouts = shouts.Select(shout => _shoutFactory.CreateDataShapedObject(shout, fields));
+                return Ok(places);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+
     }
 }

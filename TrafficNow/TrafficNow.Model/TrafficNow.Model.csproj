@@ -66,8 +66,6 @@
     <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\Utility.cs" />
     <Compile Include="Map\LocationViewModel.cs" />
-    <Compile Include="Map\Place.cs" />
-    <Compile Include="Map\PlaceViewModel.cs" />
     <Compile Include="NotificationModel\Notification.cs" />
     <Compile Include="NotificationModel\NotificationBaseModel.cs" />
     <Compile Include="Places\DbModels\Place.cs" />

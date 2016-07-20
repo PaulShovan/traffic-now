@@ -78,5 +78,18 @@ namespace TrafficNow.Service.Implementation
                 throw;
             }
         }
+
+        public async Task<List<PlaceViewModel>> GetNearbyPlaces(double lat, double lon, double rad, string userId)
+        {
+            try
+            {
+                return await _placeRepository.GetNearbyPlaces(lat, lon, rad, userId);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
     }
 }

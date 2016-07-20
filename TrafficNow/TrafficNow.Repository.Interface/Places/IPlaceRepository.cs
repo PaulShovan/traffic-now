@@ -10,5 +10,6 @@ namespace TrafficNow.Repository.Interface.Places
     public interface IPlaceRepository
     {
         Task<PlaceViewModel> AddPlace(Model.Places.DbModels.Place place);
+        Task<List<PlaceViewModel>> GetNearbyPlaces(double lat, double lon, double rad, string userId);
     }
 }

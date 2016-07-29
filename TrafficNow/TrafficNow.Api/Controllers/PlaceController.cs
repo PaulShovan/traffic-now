@@ -143,5 +143,41 @@ namespace TrafficNow.Api.Controllers
             }
         }
 
+        [Authorize]
+        [VersionedRoute("places/place", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetPlaceById(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest();
+                }
+                string token = "";
+                string userId = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                userId = user.userId;
+                var place = await _placeRepository.GetPlaceById(id, userId);
+                if (place == null)
+                {
+                    return NotFound();
+                }
+                return Ok(place);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+
     }
 }

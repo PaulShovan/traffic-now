@@ -93,5 +93,44 @@ namespace TrafficNow.Repository.Implementation.Places
                 throw;
             }
         }
+
+        public async Task<PlaceViewModel> GetPlaceById(string Id, string userId)
+        {
+            try
+            {
+                var projection = Builders<Place>.Projection.Exclude("_id").Exclude(s => s.loc);
+                var place = await Collection.Find(s => s.placeId == Id).Project<Place>(projection).FirstOrDefaultAsync();
+                if (place == null)
+                {
+                    return null;
+                }
+                return new PlaceViewModel
+                {
+                    placeId = place.placeId,
+                    placeTitle = place.placeTitle,
+                    placeDescription = place.placeDescription,
+                    likeCount = place.likeCount,
+                    commentCount = place.commentCount,
+                    shareCount = place.shareCount,
+                    comments = place.comments,
+                    sharableLink = place.sharableLink,
+                    attachments = place.attachments,
+                    placeTypes = place.placeTypes,
+                    location = place.location,
+                    isLikedByUser = place.likes.Any(p => p.userId == userId),
+                    userName = place.userName,
+                    userId = place.userId,
+                    photo = place.photo,
+                    name = place.name,
+                    email = place.email,
+                    time = place.time
+                };
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
     }
 }

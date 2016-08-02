@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Core.Helpers;
+using TrafficNow.Model.Common;
+using TrafficNow.Model.Constants;
 using TrafficNow.Model.Places.DbModels;
 using TrafficNow.Model.Places.ViewModels;
 using TrafficNow.Model.User.DbModels;
@@ -17,13 +19,15 @@ namespace TrafficNow.Service.Implementation
     {
         private IPlaceRepository _placeRepository;
         private IPointRepository _pointRepository;
+        private INotificationService _notificationService;
         private Utility _utility;
         private CryptoHelper _cryptoHelper;
         private const string baseUrl = "www.digbuzzi.com/sharedPlace?placeId=";
-        public PlaceService(IPlaceRepository placeRepository, IPointRepository pointRepository)
+        public PlaceService(IPlaceRepository placeRepository, IPointRepository pointRepository, INotificationService notificationService)
         {
             _placeRepository = placeRepository;
             _pointRepository = pointRepository;
+            _notificationService = notificationService;
             _utility = new Utility();
             _cryptoHelper = new CryptoHelper();
         }
@@ -88,6 +92,80 @@ namespace TrafficNow.Service.Implementation
             catch (Exception e)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<bool> AddPlaceComment(string placeId, Comment comment)
+        {
+            try
+            {
+                comment.time = _utility.GetTimeInMilliseconds();
+                comment.commentId = Guid.NewGuid().ToString();
+                var commentRes = await _placeRepository.AddPlaceComment(placeId, comment);
+                var notificationText = Constants.NEWPLACECOMMENTSMSG;
+                notificationText = notificationText.Replace("__NAME__", comment.commentor.userName);
+                var from = comment.commentor;
+                var to = new UserBasicInformation
+                {
+                    userName = commentRes.userName,
+                    userId = commentRes.userId,
+                    photo = commentRes.photo,
+                    name = commentRes.name,
+                    email = commentRes.email,
+                    time = commentRes.time
+                };
+                if (from.userId == to.userId)
+                {
+                    return true;
+                }
+                var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS, placeId);
+                return true;
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> AddOrRemoveLike(string placeId, UserBasicInformation like)
+        {
+            try
+            {
+                like.time = _utility.GetTimeInMilliseconds();
+                bool result = false;
+                var ack = await _placeRepository.IsAlreadyLiked(placeId, like);
+                if (ack)
+                {
+                    result = await _placeRepository.RemoveLike(placeId, like);
+                }
+                else
+                {
+                    var place = await _placeRepository.AddLike(placeId, like);
+                    var notificationText = Constants.NEWPLACELIKEMSG;
+                    notificationText = notificationText.Replace("__NAME__", like.userName);
+                    var from = like;
+                    var to = new UserBasicInformation
+                    {
+                        userName = place.userName,
+                        userId = place.userId,
+                        photo = place.photo,
+                        name = place.name,
+                        email = place.email,
+                        time = place.time
+                    };
+                    if (from.userId == to.userId)
+                    {
+                        return result;
+                    }
+                    var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWLIKE, placeId);
+                    result = true;
+                }
+                return result;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }

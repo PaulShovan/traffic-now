@@ -11,6 +11,7 @@ using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Model.Common;
 using TrafficNow.Model.Places.DbModels;
+using TrafficNow.Model.User.DbModels;
 using TrafficNow.Repository.Interface.Places;
 using TrafficNow.Service.Interface;
 
@@ -178,6 +179,105 @@ namespace TrafficNow.Api.Controllers
                 return InternalServerError();
             }
         }
+        [Authorize]
+        [HttpPost]
+        [VersionedRoute("place/{id}/comments/add", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> AddPlaceComment(string id, Comment comment)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest();
+                }
+                IEnumerable<string> values;
+                string token = "";
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                comment.commentor = user;
+                var ack = await _placeService.AddPlaceComment(id, comment);
+                return Ok(ack);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        [VersionedRoute("place/{id}/likes/addorremove", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> AddOrRemoveLike(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest();
+                }
+                IEnumerable<string> values;
+                string token = "";
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                var like = user;
+                var place = await _placeService.AddOrRemoveLike(id, like);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
 
+        }
+        [Authorize]
+        [VersionedRoute("place/{id}/likes", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetPlaceLikers(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest();
+                }
+                var likers = await _placeRepository.GetLikes(id);
+                if (likers == null)
+                {
+                    return NotFound();
+                }
+                //var response = new GenericResponse<List<UserBasicInformation>>(likers);
+                return Ok(likers);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+
+        }
+
+        [Authorize]
+        [VersionedRoute("place/{id}/comments", "aunthazel", "v1")]
+        public async Task<IHttpActionResult> GetPlaceComments(string id, int skip = 0, int limit = 10)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest();
+                }
+                var comments = await _placeRepository.GetPlaceComments(id, skip, limit);
+                //var response = new GenericResponse<List<Comment>>(shout);
+                return Ok(comments);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
+            }
+
+        }
     }
 }

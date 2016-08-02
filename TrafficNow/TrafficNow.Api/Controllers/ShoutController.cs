@@ -348,7 +348,6 @@ namespace TrafficNow.Api.Controllers
             {
                 return InternalServerError();
             }
-
         }
         [Authorize]
         [VersionedRoute("shout/{id}/likes", "aunthazel", "v1")]

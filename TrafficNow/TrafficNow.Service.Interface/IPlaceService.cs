@@ -14,7 +14,7 @@ namespace TrafficNow.Service.Interface
         Task<PlaceViewModel> AddPlace(Model.Places.DbModels.Place place);
         Task<List<PlaceViewModel>> GetNearbyPlaces(double lat, double lon, double rad, string userId);
         bool ValidatePlace(Model.Places.DbModels.Place place);
-        Task<bool> AddPlaceComment(string placeId, Comment comment);
+        Task<Comment> AddPlaceComment(string placeId, Comment comment);
         Task<bool> AddOrRemoveLike(string placeId, UserBasicInformation like);
     }
 }

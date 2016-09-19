@@ -96,7 +96,7 @@ namespace TrafficNow.Service.Implementation
             }
         }
 
-        public async Task<bool> AddPlaceComment(string placeId, Comment comment)
+        public async Task<Comment> AddPlaceComment(string placeId, Comment comment)
         {
             try
             {
@@ -117,10 +117,10 @@ namespace TrafficNow.Service.Implementation
                 };
                 if (from.userId == to.userId)
                 {
-                    return true;
+                    return comment;
                 }
                 var notificationAck = await _notificationService.AddNotification(from, to, notificationText, Constants.NEWCOMMENTS, placeId);
-                return true;
+                return comment;
             }
             catch (Exception e)
             {

@@ -229,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\digbuzzi-dev.pubxml" />
     <None Include="Properties\PublishProfiles\trafficnow-dev.pubxml" />
     <None Include="Properties\PublishProfiles\trafficnow.pubxml" />
     <None Include="Web.Debug.config">

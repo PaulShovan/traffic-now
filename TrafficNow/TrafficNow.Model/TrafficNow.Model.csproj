@@ -52,21 +52,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Amqp\AmqpMessageModel.cs" />
+    <Compile Include="Common\Comment.cs" />
+    <Compile Include="Common\Location.cs" />
+    <Compile Include="Common\LocationGeo.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Device\DeviceStatus.cs" />
+    <Compile Include="Enums\AmqpTypes.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\MultipartParser.cs" />
     <Compile Include="Helpers\PairModel.cs" />
+    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\Utility.cs" />
     <Compile Include="Map\LocationViewModel.cs" />
-    <Compile Include="Map\Place.cs" />
-    <Compile Include="Map\PlaceViewModel.cs" />
     <Compile Include="NotificationModel\Notification.cs" />
+    <Compile Include="NotificationModel\NotificationBaseModel.cs" />
+    <Compile Include="Places\DbModels\Place.cs" />
+    <Compile Include="Places\ViewModels\PlaceViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shout\DbModels\Comment.cs" />
-    <Compile Include="Shout\DbModels\Location.cs" />
-    <Compile Include="Shout\DbModels\LocationGeo.cs" />
     <Compile Include="Shout\DbModels\Shout.cs" />
     <Compile Include="Shout\ViewModels\ShoutViewModel.cs" />
     <Compile Include="User\DbModels\Badge.cs" />
@@ -87,9 +91,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Factories\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

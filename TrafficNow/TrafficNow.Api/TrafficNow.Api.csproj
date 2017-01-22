@@ -207,13 +207,13 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DeviceController.cs" />
     <Compile Include="Controllers\MapController.cs" />
+    <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\ShoutController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\InMemoryMultipartStreamProvider.cs" />
-    <Compile Include="Helpers\PasswordHasher.cs" />
     <Compile Include="Helpers\StorageService.cs" />
     <Compile Include="Helpers\TokenGenerator.cs" />
     <Compile Include="Helpers\VersionConstraint.cs" />

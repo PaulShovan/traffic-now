@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{96E3F1B8-EDFD-4C30-8032-3725297AFBD6}"
 EndProject
@@ -29,7 +29,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Api", "TrafficNo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Model", "TrafficNow.Model\TrafficNow.Model.csproj", "{C2EC15A7-7BAA-467D-820E-EBC1255824E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Notification", "TrafficNow.Notification\TrafficNow.Notification.csproj", "{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{BEFF53A1-8DD5-4CDB-9142-657FA148A0AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.Amqp", "TrafficNow.Amqp\TrafficNow.Amqp.csproj", "{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficNow.NotificationServer", "TrafficNow.NotificationServer\TrafficNow.NotificationServer.csproj", "{F6C84970-143C-4542-A931-7876C6D1F9A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -305,42 +309,78 @@ Global
 		{C2EC15A7-7BAA-467D-820E-EBC1255824E9}.Release|Windows-x64.Build.0 = Release|Any CPU
 		{C2EC15A7-7BAA-467D-820E-EBC1255824E9}.Release|Windows-x86.ActiveCfg = Release|Any CPU
 		{C2EC15A7-7BAA-467D-820E-EBC1255824E9}.Release|Windows-x86.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Android.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Android.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|iOS.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|iOS.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows Phone (Universal).ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows Phone (Universal).Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows Phone 8.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows Phone 8.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-AnyCPU.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-AnyCPU.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-ARM.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-ARM.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-x64.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-x64.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-x86.ActiveCfg = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Debug|Windows-x86.Build.0 = Debug|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Android.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Android.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Any CPU.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|iOS.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|iOS.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows Phone (Universal).ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows Phone (Universal).Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows Phone 8.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows Phone 8.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-AnyCPU.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-AnyCPU.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-ARM.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-ARM.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-x64.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-x64.Build.0 = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-x86.ActiveCfg = Release|Any CPU
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584}.Release|Windows-x86.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Android.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Android.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|iOS.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|iOS.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows Phone (Universal).ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows Phone (Universal).Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows Phone 8.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows Phone 8.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-AnyCPU.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-AnyCPU.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-ARM.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-ARM.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-x64.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-x64.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-x86.ActiveCfg = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Debug|Windows-x86.Build.0 = Debug|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Android.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Android.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|iOS.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|iOS.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows Phone (Universal).ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows Phone (Universal).Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows Phone 8.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows Phone 8.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-AnyCPU.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-AnyCPU.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-ARM.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-ARM.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-x64.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-x64.Build.0 = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-x86.ActiveCfg = Release|Any CPU
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2}.Release|Windows-x86.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Android.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Android.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|iOS.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|iOS.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows Phone (Universal).ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows Phone (Universal).Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows Phone 8.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows Phone 8.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-AnyCPU.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-AnyCPU.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-ARM.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-ARM.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-x64.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-x64.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-x86.ActiveCfg = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Debug|Windows-x86.Build.0 = Debug|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Android.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Android.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|iOS.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|iOS.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows Phone (Universal).ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows Phone (Universal).Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows Phone 8.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows Phone 8.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-AnyCPU.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-AnyCPU.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-ARM.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-ARM.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-x64.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-x64.Build.0 = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-x86.ActiveCfg = Release|Any CPU
+		{F6C84970-143C-4542-A931-7876C6D1F9A3}.Release|Windows-x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -353,6 +393,7 @@ Global
 		{805FBF72-942F-43DC-9CDA-929B43A9045C} = {FB2B5790-8CB9-4C97-8E02-641811D62A9D}
 		{05D2BCF3-68CE-450E-973F-D5E37592BB00} = {1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}
 		{C2EC15A7-7BAA-467D-820E-EBC1255824E9} = {96E3F1B8-EDFD-4C30-8032-3725297AFBD6}
-		{354FB5FE-2D57-4E35-9E2C-F6A2280E8584} = {1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}
+		{DF647E9A-C2AE-4783-8DDF-956F7BBBBBB2} = {BEFF53A1-8DD5-4CDB-9142-657FA148A0AA}
+		{F6C84970-143C-4542-A931-7876C6D1F9A3} = {1532A1FB-2F9C-46D2-8391-BB74C0DD1F5B}
 	EndGlobalSection
 EndGlobal

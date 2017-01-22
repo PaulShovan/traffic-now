@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TrafficNow.Core.Helpers;
 using TrafficNow.Model.Constants;
+using TrafficNow.Model.Helpers;
 using TrafficNow.Model.NotificationModel;
 using TrafficNow.Model.User.DbModels;
 using TrafficNow.Model.User.ViewModels;
@@ -27,6 +28,7 @@ namespace TrafficNow.Service.Implementation
         private IFollowingRepository _followingRepository;
         private INotificationService _notificationService;
         private IMailService _mailService;
+        private PasswordHasher _passwordHasher = null;
         private Utility _utility;
         public UserService(IUserRepository userRepository, IPointService pointService, 
             IFollowerService followerService, IFollowingService followingService, 
@@ -43,6 +45,7 @@ namespace TrafficNow.Service.Implementation
             _notificationService = notificationService;
             _mailService = mailService;
             _utility = new Utility();
+            _passwordHasher = new PasswordHasher();
         }
         public Task<UserViewModel> UpdateUserInfo(UserInformation user, UserBasicInformation userData)
         {
@@ -257,7 +260,7 @@ namespace TrafficNow.Service.Implementation
             try
             {
                 int rankStart = offset * count;
-                var points = await _pointRepository.GetPoints(userId, offset, count);
+                var points = await _pointRepository.GetPoints(userId, offset*count, count);
                 points = points.OrderByDescending(o => o.totalPoint).ToList();
                 List<string> leadersId = new List<string>();
                 List<LeaderBoardModel> leaderList = new List<LeaderBoardModel>();
@@ -307,13 +310,14 @@ namespace TrafficNow.Service.Implementation
                     return false;
                 }
                 string pass = _utility.RandomString(12);
-                var updated = await _userRepository.ResetPasswordUsingEmail(user.email, pass);
+                string hashedPass = _passwordHasher.GetHashedPassword(pass);
+                var updated = await _userRepository.ResetPasswordUsingEmail(user.email, hashedPass);
                 if (!updated)
                 {
                     return false;
                 }
                 var html = File.ReadAllText(bodyPath);
-                html = html.Replace("__NAME__", user.userName);
+                html = html.Replace("__NAME__", user.userName).Replace("__PASS__", pass);
                 var emailSend = _mailService.SendMail("contact@digbuzzi.com", user.email, "Digbuzzi-Forget Password", html);
                 return true;
             }

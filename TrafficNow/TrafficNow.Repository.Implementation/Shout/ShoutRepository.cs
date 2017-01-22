@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrafficNow.Model.Common;
 using TrafficNow.Model.Constants;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
@@ -114,7 +115,7 @@ namespace TrafficNow.Repository.Implementation.Shout
             }
         }
 
-        public async Task<ShoutViewModel> GetShoutById(string shoutId)
+        public async Task<ShoutViewModel> GetShoutById(string shoutId, string userId)
         {
             try
             {
@@ -139,7 +140,8 @@ namespace TrafficNow.Repository.Implementation.Shout
                     location = shout.location,
                     time = shout.time,
                     trafficCondition = shout.trafficCondition,
-                    attachments = shout.attachments
+                    attachments = shout.attachments,
+                    isLikedByUser = shout.likes.SingleOrDefault(s => s.userId == userId) == null ? false : true
                 };
                 //return result;
             }
@@ -321,8 +323,10 @@ namespace TrafficNow.Repository.Implementation.Shout
             {
                 List<ShoutViewModel> shouts = new List<ShoutViewModel>();
                 var projection = Builders<Model.Shout.DbModels.Shout>.Projection.Exclude("_id").Exclude(s => s.loc);
+                var sortBuilder = Builders<Model.Shout.DbModels.Shout>.Sort;
+                var sortOrder = sortBuilder.Descending(s => s.time);
                 var filter = Builders<Model.Shout.DbModels.Shout>.Filter.NearSphere(x => x.loc, lon, lat, rad / 3963.2);
-                var result = await Collection.Find(filter).Project<Model.Shout.DbModels.Shout>(projection).ToListAsync();
+                var result = await Collection.Find(filter).Project<Model.Shout.DbModels.Shout>(projection).Sort(sortOrder).ToListAsync();
                 foreach (var shout in result)
                 {
                     var shoutModel = new ShoutViewModel

@@ -11,6 +11,7 @@ using TrafficNow.Repository.Interface.Notification;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
+using TrafficNow.Model.Enums;
 
 namespace TrafficNow.Service.Implementation
 {
@@ -20,12 +21,14 @@ namespace TrafficNow.Service.Implementation
         private Utility _utility;
         private INotificationRepository _notificationRepository;
         private IDeviceService _deviceService;
-        public NotificationService(INotificationRepository notificationRepository, IDeviceService deviceService)
+        private IMessageSendService _messageSendService;
+        public NotificationService(INotificationRepository notificationRepository, IDeviceService deviceService, IMessageSendService messageSendService)
         {
             push = new PushBroker();
             _utility = new Utility();
             _notificationRepository = notificationRepository;
             _deviceService = deviceService;
+            _messageSendService = messageSendService;
             Initialize();
         }
         private void Initialize()
@@ -128,8 +131,9 @@ namespace TrafficNow.Service.Implementation
                 {
                     return true;
                 }
-                var payloadToSend = JsonConvert.SerializeObject(notification);
-                SendNotification(devices, payloadToSend);
+                //var payloadToSend = JsonConvert.SerializeObject(notification);
+                //SendNotification(devices, payloadToSend);
+                await _messageSendService.SendMessage(AmqpTypes.Notification, notification, devices);
                 return true;
             }
             catch (Exception e)

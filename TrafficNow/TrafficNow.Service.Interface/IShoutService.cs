@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using TrafficNow.Model.Common;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
 using TrafficNow.Model.User.DbModels;

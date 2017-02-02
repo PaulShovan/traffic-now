@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrafficNow.Model.Common;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
 using TrafficNow.Model.User.DbModels;
@@ -17,7 +18,7 @@ namespace TrafficNow.Repository.Interface.Shout
         Task<List<ShoutViewModel>> GetNearbyShouts(double lat, double lon, double rad, string userId);
         Task<List<ShoutViewModel>> GetFollowersShouts(int? offset, int? count, List<string> followers);
         Task<List<ShoutViewModel>> GetShoutsOfUser(int? offset, int? count, string userId);
-        Task<ShoutViewModel> GetShoutById(string shoutId);
+        Task<ShoutViewModel> GetShoutById(string shoutId, string userId);
         Task<ShoutViewModel> GetSharedShout(string sharedLink, bool isAuthorized);
         Task<List<Comment>> GetShoutComments(string shoutId, int skip, int limit);
         Task<Model.Shout.DbModels.Shout> AddShoutComment(string shoutId, Comment comment);

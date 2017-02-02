@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrafficNow.Amqp;
 using TrafficNow.Repository.Implementation.Device;
 using TrafficNow.Repository.Implementation.Map;
 using TrafficNow.Repository.Implementation.Notification;
+using TrafficNow.Repository.Implementation.Places;
 using TrafficNow.Repository.Implementation.Point;
 using TrafficNow.Repository.Implementation.Shout;
 using TrafficNow.Repository.Implementation.User;
@@ -25,7 +27,7 @@ namespace TrafficNow.DependencyInjection
 {
     public class DependencyServiceRegister
     {
-        public void Register(KernelBase kernel)
+        public void Register(IKernel kernel)
         {
             #region user
             kernel.Bind<IUserService>().To<UserService>();
@@ -52,6 +54,7 @@ namespace TrafficNow.DependencyInjection
             #region notification
             kernel.Bind<INotificationService>().To<NotificationService>();
             kernel.Bind<INotificationRepository>().To<NotificationRepository>();
+            kernel.Bind<IMessageSendService>().To<MessageSendService>();
             #endregion
             #region mail
             kernel.Bind<IMailService>().To<MailService>();
@@ -59,6 +62,10 @@ namespace TrafficNow.DependencyInjection
             #region device
             kernel.Bind<IDeviceStatusRepository>().To<DeviceStatusRepository>();
             kernel.Bind<IDeviceService>().To<DeviceService>();
+            #endregion
+            #region place
+            kernel.Bind<Repository.Interface.Places.IPlaceRepository>().To<PlaceRepository>();
+            kernel.Bind<IPlaceService>().To<PlaceService>();
             #endregion
         }
     }

@@ -5,12 +5,14 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Api.Response;
 using TrafficNow.Core.Helpers;
+using TrafficNow.Model.Common;
 using TrafficNow.Model.Shout.DbModels;
 using TrafficNow.Model.Shout.ViewModels;
 using TrafficNow.Model.User.DbModels;
@@ -271,7 +273,20 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var shout = await _shoutRepository.GetShoutById(id);
+                string token = "";
+                string userId = "";
+                IEnumerable<string> values;
+                if (Request.Headers.TryGetValues("Authorization", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+                var user = _tokenGenerator.GetUserFromToken(token);
+                if (string.IsNullOrEmpty(user.userId))
+                {
+                    return BadRequest("Invalid User");
+                }
+                userId = user.userId;
+                var shout = await _shoutRepository.GetShoutById(id, userId);
                 if (shout == null)
                 {
                     return NotFound();
@@ -333,7 +348,6 @@ namespace TrafficNow.Api.Controllers
             {
                 return InternalServerError();
             }
-
         }
         [Authorize]
         [VersionedRoute("shout/{id}/likes", "aunthazel", "v1")]

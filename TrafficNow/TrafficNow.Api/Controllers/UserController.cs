@@ -12,6 +12,7 @@ using System.Web.Http;
 using TrafficNow.Api.Helpers;
 using TrafficNow.Api.Models;
 using TrafficNow.Api.Response;
+using TrafficNow.Model.Helpers;
 using TrafficNow.Model.User.DbModels;
 using TrafficNow.Model.User.ViewModels;
 using TrafficNow.Repository.Interface.Notification;
@@ -363,7 +364,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var followers = await _followerRepository.GetFollowers(userId, offset, count);
+                var followers = await _followerRepository.GetFollowers(userId, offset*count, count);
                 //var response = new GenericResponse<List<UserBasicInformation>>(followers);
                 return Ok(followers);
 
@@ -394,7 +395,7 @@ namespace TrafficNow.Api.Controllers
                     }
                     userId = user.userId;
                 }
-                var followings = await _followingRepository.GetFollowings(userId, offset, count);
+                var followings = await _followingRepository.GetFollowings(userId, offset*count, count);
                 //var response = new GenericResponse<List<UserBasicInformation>>(followings);
                 return Ok(followings);
 
@@ -506,7 +507,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var notifications = await _notificationRepository.GetNotification(user.userId, offset, count);
+                var notifications = await _notificationRepository.GetNotification(user.userId, offset*count, count);
                 return Ok(notifications);
             }
             catch (Exception e)

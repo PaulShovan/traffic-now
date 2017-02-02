@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DependencyResolver.cs" />
     <Compile Include="DependencyServiceRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -80,6 +81,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TrafficNow.Amqp\TrafficNow.Amqp.csproj">
+      <Project>{df647e9a-c2ae-4783-8ddf-956f7bbbbbb2}</Project>
+      <Name>TrafficNow.Amqp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TrafficNow.Model\TrafficNow.Model.csproj">
       <Project>{c2ec15a7-7baa-467d-820e-ebc1255824e9}</Project>
       <Name>TrafficNow.Model</Name>

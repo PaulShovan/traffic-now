@@ -1,10 +1,7 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 using TrafficNow.Core.Helpers;
 using TrafficNow.Model.User.DbModels;
 using TrafficNow.Model.User.ViewModels;
@@ -49,8 +46,12 @@ namespace TrafficNow.Repository.Implementation.User
                 //var result = query.FirstOrDefault();
 //to do join with point collection
                 var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id").Exclude(u => u.facebookId);
-                var result = await Collection.Find(u => u.userId == userId).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
-                if(result == null)
+                var result =
+                    await
+                        Collection.Find(u => u.userId == userId)
+                            .Project<Model.User.DbModels.User>(projection)
+                            .FirstOrDefaultAsync();
+                if (result == null)
                 {
                     return null;
                 }
@@ -76,16 +77,16 @@ namespace TrafficNow.Repository.Implementation.User
             }
             catch (Exception e)
             {
-
                 throw;
             }
         }
+
         public async Task<bool> IsEmailTaken(string email)
         {
             try
             {
                 var result = await Collection.CountAsync(user => user.email == email);
-                if(result > 0)
+                if (result > 0)
                 {
                     return true;
                 }
@@ -126,7 +127,8 @@ namespace TrafficNow.Repository.Implementation.User
                     .Include(u => u.name)
                     .Include(u => u.userName)
                     .Include(u => u.email);
-                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
+                var result =
+                    await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
                 return result;
             }
             catch (Exception ex)
@@ -147,7 +149,8 @@ namespace TrafficNow.Repository.Implementation.User
                     .Include(u => u.name)
                     .Include(u => u.userName)
                     .Include(u => u.email);
-                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
+                var result =
+                    await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
                 return result;
             }
             catch (Exception ex)
@@ -168,8 +171,46 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
-       
+
+        public async Task<UserBasicInformation> GetUserUsingEmail(string email)
+        {
+            try
+            {
+                var builder = Builders<Model.User.DbModels.User>.Filter;
+                var filter = builder.Eq(user => user.email, email);
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id")
+                    .Include(u => u.userId)
+                    .Include(u => u.photo)
+                    .Include(u => u.name)
+                    .Include(u => u.userName)
+                    .Include(u => u.email);
+                var result =
+                    await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> ResetPasswordUsingEmail(string email, string password)
+        {
+            try
+            {
+                var filter = Builders<Model.User.DbModels.User>.Filter.Eq(u => u.email, email);
+                var update = Builders<Model.User.DbModels.User>.Update.Set(u => u.password, password);
+                var result = await Collection.UpdateOneAsync(filter, update);
+                return result.IsAcknowledged;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
         #region follow
+
         public async Task<UserViewModel> UpdateUserInfo(UserInformation user, List<PairModel> updatedFields)
         {
             try
@@ -177,7 +218,8 @@ namespace TrafficNow.Repository.Implementation.User
                 var update = Builders<Model.User.DbModels.User>.Update.Set("bio", user.bio);
                 //var update = Builders<UserModel>.Update.Set(u=>u.photo, user.photo);
                 var filter = Builders<Model.User.DbModels.User>.Filter.Eq(s => s.userId, user.userId);
-                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id").Exclude(u => u.facebookId); ;
+                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id").Exclude(u => u.facebookId);
+                ;
                 foreach (var field in updatedFields)
                 {
                     update = update.Set(field.key, field.value);
@@ -210,6 +252,7 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
+
         public async Task<bool> UpdateFollowingCount(string userId, int count)
         {
             try
@@ -224,6 +267,7 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
+
         public async Task<bool> UpdateFollowerCount(string userId, int count)
         {
             try
@@ -248,22 +292,22 @@ namespace TrafficNow.Repository.Implementation.User
         {
             try
             {
-                List<UserViewModel> leaders = new List<UserViewModel>();
+                var leaders = new List<UserViewModel>();
                 var filter = Builders<Model.User.DbModels.User>.Filter.In(s => s.userId, userIds);
                 var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id");
                 var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).ToListAsync();
                 result.ForEach(user => leaders.Add(
-                        new UserViewModel
-                        {
-                            name = user.name,
-                            userId = user.userId,
-                            userName = user.userName,
-                            photo = user.photo,
-                            email = user.email,
-                            time = user.time,
-                            followerCount = user.followerCount
-                        }
-                        ));
+                    new UserViewModel
+                    {
+                        name = user.name,
+                        userId = user.userId,
+                        userName = user.userName,
+                        photo = user.photo,
+                        email = user.email,
+                        time = user.time,
+                        followerCount = user.followerCount
+                    }
+                    ));
                 return leaders;
             }
             catch (Exception)
@@ -271,41 +315,7 @@ namespace TrafficNow.Repository.Implementation.User
                 throw;
             }
         }
-        #endregion follow
-        public async Task<UserBasicInformation> GetUserUsingEmail(string email)
-        {
-            try
-            {
-                var builder = Builders<Model.User.DbModels.User>.Filter;
-                var filter = builder.Eq(user => user.email, email);
-                var projection = Builders<Model.User.DbModels.User>.Projection.Exclude("_id")
-                    .Include(u => u.userId)
-                    .Include(u => u.photo)
-                    .Include(u => u.name)
-                    .Include(u => u.userName)
-                    .Include(u => u.email);
-                var result = await Collection.Find(filter).Project<Model.User.DbModels.User>(projection).FirstOrDefaultAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
 
-        public async Task<bool> ResetPasswordUsingEmail(string email, string password)
-        {
-            try
-            {
-                var filter = Builders<Model.User.DbModels.User>.Filter.Eq(u => u.email, email);
-                var update = Builders<Model.User.DbModels.User>.Update.Set(u => u.password, password);
-                var result = await Collection.UpdateOneAsync(filter, update);
-                return result.IsAcknowledged;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-        }
+        #endregion follow
     }
 }

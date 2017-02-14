@@ -43,7 +43,7 @@ namespace TrafficNow.Api.Controllers
             _followerRepository = followerRepository;
             _followingRepository = followingRepository;
             _passwordHasher = new PasswordHasher();
-            _storageService = new StorageService();
+            _storageService = new StorageService(); 
         }
         //private async Task<UserModel> VerifyFacebookAccessToken(string accessToken)
         //{

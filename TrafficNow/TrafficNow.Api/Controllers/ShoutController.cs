@@ -107,7 +107,7 @@ namespace TrafficNow.Api.Controllers
                         Stream stream = await file.ReadAsStreamAsync();
                         string extension = ".jpg";
                         photoUrl = photoUrl + extension;
-                        _storageService.UploadFile("trafficnow", photoUrl, stream);
+                        _storageService.UploadFile("apphbdigbuzzi", photoUrl, stream);
                         shout.attachments.Add(s3Prefix + photoUrl);
                     }
                 }

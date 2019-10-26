@@ -136,7 +136,7 @@ namespace TrafficNow.Api.Controllers
                 if (File.Exists(defaultPath))
                 {
                     FileStream fileStream = File.OpenRead(defaultPath);
-                    _storageService.UploadFile("trafficnow", photoUrl, fileStream);
+                    _storageService.UploadFile("apphbdigbuzzi", photoUrl, fileStream);
                 }
                 var jwt = _tokenGenerator.GenerateUserToken(user);
                 var validity = _tokenGenerator.GetTokenValidity();
@@ -231,7 +231,7 @@ namespace TrafficNow.Api.Controllers
                 {
                     var photoUrl = user.userId + "/profile/" + "profile_pic.png";
                     Stream stream = await file.ReadAsStreamAsync();
-                    _storageService.UploadFile("trafficnow", photoUrl, stream);
+                    _storageService.UploadFile("apphbdigbuzzi", photoUrl, stream);
                     userInfo.photo = s3Prefix + photoUrl;
                 }
                 var updatedUser = await _userService.UpdateUserInfo(userInfo, user);
